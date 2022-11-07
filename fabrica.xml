@@ -1,6 +1,6 @@
 <DADOS>
     <DEFINICOES>
-        <NOME_EMPRESA>Empresa da Minha Terra</ NOME_EMPRESA >
+        <NOME_EMPRESA>Empresa da Minha Terra</NOME_EMPRESA>
         <HORA_INICIO>8</HORA_INICIO>
         <HORA_FECHO>16</HORA_FECHO>
         <VIZINHANCA_AVISO>10</VIZINHANCA_AVISO>
@@ -9,19 +9,19 @@
             <VERDE>0, 80</VERDE>
             <AMARELO>81, 100</AMARELO>
             <VERMELHO>101, 500</VERMELHO>
-            <PROB_AVARIA>0.01</ PROB_AVARIA>
+            <PROB_AVARIA>0.01</PROB_AVARIA>
         </MELETRICO>
         <MCOMBUSTAO>
             <VERDE>0, 80</VERDE>
             <AMARELO>81, 100</AMARELO>
             <VERMELHO>101, 250</VERMELHO>
-            <PROB_AVARIA>0.1</ PROB_AVARIA>
+            <PROB_AVARIA>0.1</PROB_AVARIA>
         </MCOMBUSTAO>
         <MINDUCAO>
             <VERDE>0, 50</VERDE>
             <AMARELO>51, 70</AMARELO>
             <VERMELHO>71, 100</VERMELHO>
-            <PROB_AVARIA>1</ PROB_AVARIA>
+            <PROB_AVARIA>1</PROB_AVARIA>
         </MINDUCAO>
     </DEFINICOES>
     <MOTORES>
