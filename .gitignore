@@ -1,4 +1,5 @@
-CMakeCache.txt
+.idea/
+build/
 CMakeFiles/
-.idea
+CMakeCache.txt
 main
