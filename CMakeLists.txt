@@ -7,6 +7,10 @@ include_directories(.)
 
 add_executable(ipv_poo_projeto1_2022
         EstadoMotor.h
+        Fabrica.cpp
+        Fabrica.h
+        Motor.cpp
+        Motor.h
         Sensor.h
         Sensor.cpp
         User.cpp
