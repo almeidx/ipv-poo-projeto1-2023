@@ -8,4 +8,5 @@ include_directories(.)
 add_executable(ipv_poo_projeto1_2022
         User.cpp
         User.h
+        UserPermissions.h
         main.cpp)

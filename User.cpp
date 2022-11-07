@@ -1,5 +1,10 @@
-//
-// Created by rodri on 07/11/2022.
-//
-
 #include "User.h"
+
+User::User(string id, string nome) {
+    this->id = id;
+    this->nome = nome;
+}
+
+User::~User() {
+    cout << "User " << nome << " destroyed" << endl;
+}
