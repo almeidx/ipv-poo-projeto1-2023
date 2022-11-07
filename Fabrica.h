@@ -1,28 +1,25 @@
-#ifndef MOTOR_H
-#define MOTOR_H
+#ifndef FABRICA_H
+#define FABRICA_H
 
 #include <iostream>
-#include <string>
 #include <list>
 
-#include "User.h"
 #include "Motor.h"
 #include "Sensor.h"
+#include "User.h"
 
 using namespace std;
 
-class Fabrica
-{
-
-    list<User *> ListUsers;
-    list<Sensor *> ListSensor;
-    list<Motor *> ListMotor;
+class Fabrica {
+	list<User *> Users;
+	list<Sensor *> Sensores;
+	list<Motor *> Motores;
 
 public:
-    Fabrica();
-    ~Fabrica();
-    void LOAD();
-    void ADD();
+	Fabrica();
+	~Fabrica();
+	void LOAD();
+	void ADD();
 };
 
-#endif
+#endif // FABRICA_H
