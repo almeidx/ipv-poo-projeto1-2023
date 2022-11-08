@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(ipv_poo_projeto1_2022
-        EstadoMotor.h
         Fabrica.cpp
         Fabrica.h
         Motor.cpp
