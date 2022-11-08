@@ -3,10 +3,18 @@
 
 #include <iostream>
 #include <string>
+
 using namespace std;
 
+enum ESTADO_MOTOR {
+	STOP = 0,
+	START,
+	RUN,
+	AVARIADO,
+};
+
 class Motor {
-	string ID;
+	int ID;
 	string MARCA;
 	float CONSUMO_HORA;
 	float TEMPERATURA_AVISO;
@@ -21,6 +29,8 @@ public:
 	void RESTART();
 	bool STOP();
 	void ESTOU_QUENTE();
+
+	int Get_Id() { return ID; }
 };
 
 #endif
