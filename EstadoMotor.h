@@ -1,7 +1,7 @@
 #ifndef ESTADO_MOTOR_H
 #define ESTADO_MOTOR_H
 
-enum EstadoMotor {
+enum ESTADO_MOTOR {
 	STOP = 0,
 	START,
 	RUN,
