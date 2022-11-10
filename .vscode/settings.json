@@ -50,6 +50,13 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp"
   },
-  "cSpell.words": ["festado", "fich", "fvideo", "MANUTENCAO", "Missel"],
+  "cSpell.words": [
+    "festado",
+    "fich",
+    "fvideo",
+    "MANUTENCAO",
+    "Missel",
+    "Relatorio"
+  ],
   "cmake.configureOnOpen": false
 }

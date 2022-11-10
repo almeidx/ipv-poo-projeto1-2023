@@ -52,15 +52,23 @@ ESTADO_MOTOR Fabrica::Get_Estado(int id_motor) {
 			return (*it)->Get_Estado();
 		}
 	}
+
+	return ESTADO_MOTOR::AVARIADO;
 }
 
 list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {}
 
 bool Fabrica::Manutencao() {
+	if (Motores.empty()) {
+		return false;
+	}
+
 	for (list<Motor *>::iterator it = Motores.begin(); it != Motores.end(); ++it) {
 		(*it)->Set_Temperatura(TEMPERATURA_MANUTENCAO);
 		(*it)->Set_Estado(ESTADO_MOTOR::RUN);
 	}
+
+	return true;
 }
 
 list<string> Fabrica::Ranking_Dos_Fracos() {}

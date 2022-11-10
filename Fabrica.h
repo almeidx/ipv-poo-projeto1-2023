@@ -27,7 +27,6 @@ public:
 	bool Load(const string &ficheiro);
 	bool Add(User *ut);
 	bool Add(Motor *m);
-	bool Load(const string &ficheiro);
 	void Listar(ostream &f = cout);
 	void Desligar(int id_motor);
 	ESTADO_MOTOR Get_Estado(int id_motor);
