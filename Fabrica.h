@@ -8,17 +8,27 @@
 #include "Motor.h"
 #include "Sensor.h"
 #include "User.h"
+#include "tinyxml2.h"
 
 using namespace std;
 
 #define TEMPERATURA_MANUTENCAO 10
 
 class Fabrica {
-	list<User *> Users;
-	list<Sensor *> Sensores;
-	list<Motor *> Motores;
+	string nome;
+	int hora_inicio;
+	int hora_fecho;
+	int vizinhanca_aviso;
+	int dimensao_x;
+	int dimensao_y;
 
-	User *Ut_Atual;
+	list<User *> *Users;
+	list<Sensor *> *Sensores;
+	list<Motor *> *Motores;
+
+	User *User_Atual;
+
+	bool Tem_User_Atual(const string fname);
 
 public:
 	Fabrica();

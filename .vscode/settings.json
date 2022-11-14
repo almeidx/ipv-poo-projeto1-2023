@@ -48,9 +48,12 @@
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "cinttypes": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "map": "cpp"
   },
+  "editor.tabSize": 4,
   "cSpell.words": [
+    "DEFINICOES",
     "festado",
     "fich",
     "fvideo",
