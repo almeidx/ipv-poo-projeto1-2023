@@ -76,9 +76,10 @@ bool Motor::STOP() {
 
 void Motor::ESTOU_QUENTE() { STOP(); }
 
-MCombostao::MCombostao(/* args */) {}
+MCombostao::MCombostao() {}
 
 MCombostao::~MCombostao() {}
 
-MEletrico::MEletrico(/* args */) {}
 MEletrico::MEletrico() {}
+
+MEletrico::~MEletrico() {}

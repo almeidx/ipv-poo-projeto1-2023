@@ -43,19 +43,17 @@ public:
 };
 
 class MCombostao {
-private:
-	/* data */
+
 public:
-	MCombostao(/* args */);
+	MCombostao();
 	~MCombostao();
 };
 
 class MEletrico {
-private:
-	/* data */
+
 public:
-	MEletrico(/* args */);
 	MEletrico();
+	~MEletrico();
 };
 
 #endif // MOTOR_H
