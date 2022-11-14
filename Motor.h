@@ -56,4 +56,10 @@ public:
 	~MEletrico();
 };
 
+class MInducao {
+public:
+	MInducao();
+	~MInducao();
+};
+
 #endif // MOTOR_H
