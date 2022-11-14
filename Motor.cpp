@@ -83,3 +83,7 @@ MCombostao::~MCombostao() {}
 MEletrico::MEletrico() {}
 
 MEletrico::~MEletrico() {}
+
+MInducao::MInducao() {}
+
+MInducao::~MInducao() {}
