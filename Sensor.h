@@ -6,27 +6,29 @@
 using namespace std;
 
 class Sensor {
-	string id;
+	int id;
 	string marca;
 	float valor;
 	float probabilidade_avaria;
+	int x,y;
+
 
 public:
-	Sensor(string id, string marca, float valor, float probabilidade_avaria);
+	Sensor(string id, string marca, float valor, float probabilidade_avaria,int x, int y) 
 	~Sensor();
 };
 
 class SensorLuz : public Sensor
 {
 public:
-	SensorLuz(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	SensorLuz(int id, string marca, float valor, float probabilidade_avaria, int x ,int y) : Sensor(id, marca, valor, probabilidade_avaria,x,y) {}
 	~SensorLuz();
 };
 
 class SHumidade : public Sensor
 {
 public:
-	SHumidade(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	SHumidade(int id, string marca, float valor, float probabilidade_avaria, int x,int y) : Sensor(id, marca, valor, probabilidade_avaria,x,y) {}
 	~SHumidade();
 };
 
@@ -34,7 +36,7 @@ public:
 class SFumo : public Sensor
 {
 public:
-	SFumo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	SFumo(int id, string marca, float valor, float probabilidade_avaria,int x ,int y) : Sensor(id, marca, valor, probabilidade_avaria,x,y) {}
 	~SFumo();
 };
 
@@ -42,7 +44,7 @@ class SMisseis : public Sensor
 {
 
 public:
-   	 SMisseis(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+   	 SMisseis(int id, string marca, float valor, float probabilidade_avaria, int x ,int y) : Sensor(id, marca, valor, probabilidade_avaria,x,y) {}
 	~SMisseis();
 };
 
@@ -50,7 +52,7 @@ class SFogo : public Sensor
 {
 
 public:
-   	 SFogo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+   	 SFogo(int id, string marca, float valor, float probabilidade_avaria,int x , int y) : Sensor(id, marca, valor, probabilidade_avaria,x,y) {}
 	~SFogo();
 };
 
@@ -58,7 +60,7 @@ class STemperatura : public Sensor
 {
 
 public:
-   	 STemperatura(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+   	 STemperatura(int id, string marca, float valor, float probabilidade_avaria, int x , int y) : Sensor(id, marca, valor, probabilidade_avaria , x,y) {}
 	~STemperatura();
 };
 

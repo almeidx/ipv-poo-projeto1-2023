@@ -59,5 +59,6 @@
     "Relatorio"
   ],
   "cmake.configureOnOpen": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "C_Cpp.errorSquiggles": "Disabled"
 }
