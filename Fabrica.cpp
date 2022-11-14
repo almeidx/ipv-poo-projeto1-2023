@@ -80,10 +80,11 @@ void Fabrica::Relatorio(string fich_xml) {}
 int Fabrica::Aviso_Humidade(list<Motor *> &lm) {}
 
 int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
-
 	for (list<Motor *>::iterator it = Motores.begin(); it != Motores.end(); ++it) {
 		(*it)->STOP();
 	}
+
+	system(fich_video.c_str());
 }
 
 int Fabrica::Aviso_Luz(string fich_video) {}

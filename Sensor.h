@@ -10,6 +10,10 @@ class Sensor {
 	string marca;
 	float valor;
 	float probabilidade_avaria;
+
+public:
+	Sensor(string id, string marca, float valor, float probabilidade_avaria);
+	~Sensor();
 };
 
 #endif // SENSOR_H
