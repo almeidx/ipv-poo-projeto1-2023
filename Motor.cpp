@@ -1,13 +1,16 @@
 #include "Motor.h"
 
 Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			 float probabilidade_avariada) {
+			 float probabilidade_avariada, int x, int y) {
 	this->id = id;
 	this->marca = marca;
 	this->consumo_hora = consumo_hora;
 	this->temperatura_aviso = temperatura_aviso;
 	this->temperatura_paragem = temperatura_paragem;
 	this->probabilidade_avariada = probabilidade_avariada;
+
+	this->x = x;
+	this->y = y;
 
 	temperatura = 0;
 	estado = ESTADO_MOTOR::STOP;

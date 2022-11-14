@@ -1,37 +1,24 @@
 #include "Sensor.h"
 
-Sensor::Sensor(string id, string marca, float valor, float probabilidade_avaria) {
-    this->id = id;
-    this->marca = marca;
-    this->valor = valor;
-    this->probabilidade_avaria = probabilidade_avaria;
+Sensor::Sensor(int id, string marca, float valor, float probabilidade_avaria, int x, int y) {
+	this->id = id;
+	this->marca = marca;
+	this->valor = valor;
+	this->probabilidade_avaria = probabilidade_avaria;
+	this->x = x;
+	this->y = y;
 }
 
 Sensor::~Sensor() {}
 
-SensorLuz::~SensorLuz()
-{
+SLuz::~SLuz() {}
 
-}
+SHumidade::~SHumidade() {}
 
-SHumidade::~SHumidade()
-{
+SFumo::~SFumo() {}
 
-}
+SMisseis::~SMisseis() {}
 
-SFumo::~SFumo()
-{
-}
+SFogo::~SFogo() {}
 
-SMisseis::~SMisseis()
-{
-}
-
-
-SFogo::~SFogo()
-{
-}
-
-STemperatura::~STemperatura()
-{
-}
+STemperatura::~STemperatura() {}

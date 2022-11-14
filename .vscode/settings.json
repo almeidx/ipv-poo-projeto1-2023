@@ -54,12 +54,20 @@
   "editor.tabSize": 4,
   "cSpell.words": [
     "DEFINICOES",
+    "dimensao",
+    "dimensoes",
     "festado",
     "fich",
     "fvideo",
     "MANUTENCAO",
+    "MCOMBUSTAO",
+    "MELETRICO",
+    "MINDUCAO",
     "Missel",
-    "Relatorio"
+    "Relatorio",
+    "tinyxml",
+    "Uteis",
+    "vizinhanca"
   ],
   "cmake.configureOnOpen": false,
   "editor.formatOnSave": true

@@ -10,10 +10,12 @@ add_executable(ipv_poo_projeto1_2022
         Fabrica.h
         Motor.cpp
         Motor.h
+        Ponto.h
         Sensor.h
         Sensor.cpp
+        tinyxml2.cpp
+        tinyxml2.h
         User.cpp
         User.h
-        XMLReader.cpp
-        XMLReader.h
+        Uteis.h
         main.cpp)

@@ -6,8 +6,10 @@
 #include <list>
 
 #include "Motor.h"
+#include "Ponto.h"
 #include "Sensor.h"
 #include "User.h"
+#include "Uteis.h"
 #include "tinyxml2.h"
 
 using namespace std;
@@ -32,8 +34,8 @@ class Fabrica {
 
 public:
 	Fabrica();
-	~Fabrica();
 	Fabrica(User *ut);
+	~Fabrica();
 	bool Load(const string &ficheiro);
 	bool Add(User *ut);
 	bool Add(Motor *m);

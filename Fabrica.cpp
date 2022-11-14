@@ -1,17 +1,31 @@
 #include "Fabrica.h"
 
+typedef struct MotorLimits {
+	Pair verde, amarelo, vermelho;
+	int probabilidade_avaria;
+} MotorLimits;
+
 Fabrica::Fabrica() {
+	nome = "???";
+	hora_inicio = -1;
+	hora_fecho = -1;
+	vizinhanca_aviso = -1;
+	dimensao_x = -1;
+	dimensao_y = -1;
+
 	this->Users = new list<User *>;
 	this->Sensores = new list<Sensor *>;
 	this->Motores = new list<Motor *>;
+
+	User_Atual = nullptr;
 }
 
-Fabrica::~Fabrica() { cout << "Destruindo Fabrica" << endl; }
-
-Fabrica::Fabrica(User *ut) {
+Fabrica::Fabrica(User *ut) : Fabrica() {
 	User_Atual = ut;
 	Users->push_back(ut);
 }
+
+Fabrica::~Fabrica() { cout << "Destruindo Fabrica" << endl; }
 
 bool Fabrica::Tem_User_Atual(const string fname) {
 	if (!User_Atual) {
@@ -39,14 +53,55 @@ bool Fabrica::Load(const string &ficheiro) {
 		return false;
 	}
 
-	XMLElement *definicoes = root->FirstChildElement("DEFINICOES");
-	if (!definicoes) {
-		cout << "Ficheiro XML mal formado" << endl;
-		return false;
+	{
+		XMLElement *definicoes = root->FirstChildElement("DEFINICOES");
+		if (!definicoes) {
+			cout << "Ficheiro XML mal formado" << endl;
+			return false;
+		}
+
+		this->nome = definicoes->FirstChildElement("NOME_EMPRESA")->GetText();
+		this->hora_inicio = definicoes->FirstChildElement("HORA_INICIO")->IntText();
+		this->hora_fecho = definicoes->FirstChildElement("HORA_FECHO")->IntText();
+		this->vizinhanca_aviso = definicoes->FirstChildElement("VIZINHANCA_AVISO")->IntText();
+
+		string dimensoes = root->FirstChildElement("DIMENSAO_FABRICA")->GetText();
+		int *dim = Uteis::Split_String_Coordenadas(dimensoes);
+		dimensao_x = dim[0];
+		dimensao_y = dim[1];
 	}
 
-	this->nome = definicoes->FirstChildElement("NOME_EMPRESA")->GetText();
-	this->hora_inicio = definicoes->FirstChildElement("HORA_INICIO")->IntText();
+	{
+		XMLElement *motores = root->FirstChildElement("MOTORES");
+		if (!motores) {
+			cout << "Ficheiro XML mal formado" << endl;
+			return false;
+		}
+
+		XMLNode *motor_node = motores->FirstChild();
+		while (motor_node) {
+			XMLElement *motor = motor_node->ToElement();
+
+			string nome = motor->Name();
+
+			int id = motor->FirstChildElement("ID")->IntText();
+			string marca = motor->FirstChildElement("MARCA")->GetText();
+			int consumo_hora = motor->FirstChildElement("CONSUMO_HORA")->IntText();
+
+			int *dims = Uteis::Split_String_Coordenadas(motor->FirstChildElement("DIMENSOES")->GetText());
+			Motor *m;
+
+			if (nome == "MCOMBUSTAO") {
+				m = new MCombostao(id, marca, consumo_hora, dims[0], dims[1]);
+			} else if (nome == "MELETRICO") {
+				m = new MEletrico(id, marca, consumo_hora, dims[0], dims[1]);
+			} /*else if (nome == "MINDUCAO") {
+				m = new MInducao(id, marca, consumo_hora, dims[0], dims[1]);
+			}*/
+
+			Add(m);
+		}
+	}
 }
 
 bool Fabrica::Add(User *ut) {

@@ -19,17 +19,17 @@ class Motor {
 	float consumo_hora;
 	float temperatura_aviso;
 	float temperatura_paragem;
-		float probabilidade_avariada;
+	float probabilidade_avariada;
 
 	float temperatura;
 	ESTADO_MOTOR estado;
-	int x,y;
+	int x, y;
 
 	bool Esta_Avariado(const string fname);
 
 public:
 	Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-		  float probabilidade_avariada,int x ,int y);
+		  float probabilidade_avariada, int x, int y);
 	~Motor();
 	bool RUN();
 	void START();
@@ -43,19 +43,19 @@ public:
 	void Set_Temperatura(float temperatura) { this->temperatura = temperatura; }
 };
 
-class MCombostao :  public Motor {
-
+class MCombostao : public Motor {
 public:
 	MCombostao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-		  float probabilidade_avariada, int x ,int y) : Motor(id, marca, consumo_hora, temperatura_aviso ,temperatura_paragem, probabilidade_avariada, x ,y) {}
+			   float probabilidade_avariada, int x, int y)
+		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, x, y) {}
 	~MCombostao();
 };
 
 class MEletrico : public Motor {
-
 public:
 	MEletrico(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-		  float probabilidade_avariada, int x , int y) : Motor(id, marca, consumo_hora, temperatura_aviso ,temperatura_paragem, probabilidade_avariada,x,y) {}
+			  float probabilidade_avariada, int x, int y)
+		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, x, y) {}
 	~MEletrico();
 };
 
