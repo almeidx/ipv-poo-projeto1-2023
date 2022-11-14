@@ -87,18 +87,6 @@ int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
 	system(fich_video.c_str());
 }
 
-// Determinar a distância //
-float Distancia(int x1,x2,y1,y2)
-
-
-
-
-int Fabrica::Aviso_Luz(string fich_video) {
-
-
-    {
-        		
-	
-    }
+int Fabrica::Aviso_Luz(string fich_video) {}
 
 void Fabrica::Aviso_Missel(string fvideo, string festado) {}
