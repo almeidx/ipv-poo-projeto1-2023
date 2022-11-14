@@ -42,4 +42,20 @@ public:
 	void Set_Temperatura(float temperatura) { this->temperatura = temperatura; }
 };
 
+class MCombostao {
+private:
+	/* data */
+public:
+	MCombostao(/* args */);
+	~MCombostao();
+};
+
+class MEletrico {
+private:
+	/* data */
+public:
+	MEletrico(/* args */);
+	MEletrico();
+};
+
 #endif // MOTOR_H
