@@ -23,43 +23,43 @@ public:
 	~SensorLuz();
 };
 
-class SensorHumidade : public Sensor
+class SHumidade : public Sensor
 {
 public:
-	SensorHumidade(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
-	~SensorHumidade();
+	SHumidade(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	~SHumidade();
 };
 
 
-class SensorFumo : public Sensor
+class SFumo : public Sensor
 {
 public:
-	SensorFumo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
-	~SensorFumo();
+	SFumo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	~SFumo();
 };
 
-class SensorMisseis : public Sensor
+class SMisseis : public Sensor
 {
 
 public:
-   	 SensorMisseis(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
-	~SensorMisseis();
+   	 SMisseis(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	~SMisseis();
 };
 
-class SensorFogo : public Sensor
+class SFogo : public Sensor
 {
 
 public:
-   	 SensorFogo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
-	~SensorFogo();
+   	 SFogo(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	~SFogo();
 };
 
-class SensorTemperatura : public Sensor
+class STemperatura : public Sensor
 {
 
 public:
-   	 SensorTemperatura(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
-	~SensorTemperatura();
+   	 STemperatura(string id, string marca, float valor, float probabilidade_avaria) : Sensor(id, marca, valor, probabilidade_avaria) {}
+	~STemperatura();
 };
 
 

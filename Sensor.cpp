@@ -14,24 +14,24 @@ SensorLuz::~SensorLuz()
 
 }
 
-SensorHumidade::~SensorHumidade()
+SHumidade::~SHumidade()
 {
 
 }
 
-SensorFumo::~SensorFumo()
+SFumo::~SFumo()
 {
 }
 
-SensorMisseis::~SensorMisseis()
+SMisseis::~SMisseis()
 {
 }
 
 
-SensorFogo::~SensorFogo()
+SFogo::~SFogo()
 {
 }
 
-SensorTemperatura::~SensorTemperatura()
+STemperatura::~STemperatura()
 {
 }
