@@ -58,5 +58,6 @@
     "Missel",
     "Relatorio"
   ],
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "editor.formatOnSave": true
 }
