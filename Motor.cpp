@@ -82,3 +82,4 @@ void Motor::ESTOU_QUENTE() { STOP(); }
 MCombostao::~MCombostao() {}
 
 MEletrico::~MEletrico() {}
+MInducao::~MInducao() {}
