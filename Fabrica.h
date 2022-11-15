@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <map>
 
 #include "Motor.h"
-#include "Ponto.h"
 #include "Sensor.h"
 #include "User.h"
 #include "Uteis.h"
@@ -16,6 +16,11 @@ using namespace std;
 
 #define TEMPERATURA_MANUTENCAO 10
 
+typedef struct MotorLimits {
+	Pair *verde, amarelo, vermelho;
+	int probabilidade_avaria;
+} MOTOR_LIMITS;
+
 class Fabrica {
 	string nome;
 	int hora_inicio;
@@ -23,6 +28,8 @@ class Fabrica {
 	int vizinhanca_aviso;
 	int dimensao_x;
 	int dimensao_y;
+
+	map<string, MOTOR_LIMITS> limites_motores;
 
 	list<User *> *Users;
 	list<Sensor *> *Sensores;

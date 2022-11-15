@@ -1,10 +1,5 @@
 #include "Fabrica.h"
 
-typedef struct MotorLimits {
-	Pair verde, amarelo, vermelho;
-	int probabilidade_avaria;
-} MotorLimits;
-
 Fabrica::Fabrica() {
 	nome = "???";
 	hora_inicio = -1;
@@ -65,10 +60,17 @@ bool Fabrica::Load(const string &ficheiro) {
 		this->hora_fecho = definicoes->FirstChildElement("HORA_FECHO")->IntText();
 		this->vizinhanca_aviso = definicoes->FirstChildElement("VIZINHANCA_AVISO")->IntText();
 
-		string dimensoes = root->FirstChildElement("DIMENSAO_FABRICA")->GetText();
+		string dimensoes = definicoes->FirstChildElement("DIMENSAO_FABRICA")->GetText();
 		int *dim = Uteis::Split_String_Coordenadas(dimensoes);
 		dimensao_x = dim[0];
 		dimensao_y = dim[1];
+
+		XMLElement *meletrico = definicoes->FirstChildElement("MELETRICO");
+		MOTOR_LIMITS limites;
+
+		limites.verde = Uteis::Split_String_Coordenadas(meletrico->FirstChildElement("MIN")->GetText());
+		limites.amarelo = meletrico->FirstChildElement("MAX")->IntText();
+		limites.vermelho = meletrico->FirstChildElement("STEP")->IntText();
 	}
 
 	{
