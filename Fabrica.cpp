@@ -31,6 +31,15 @@ bool Fabrica::Tem_User_Atual(const string fname) {
 	return true;
 }
 
+MOTOR_LIMITS *Fabrica::Extrair_Limites_Motor(tinyxml2::XMLElement *root, MOTOR_LIMITS *lim) {
+	lim->verde = Uteis::Split_String_Pair(root->FirstChildElement("VERDE")->GetText());
+	lim->amarelo = Uteis::Split_String_Pair(root->FirstChildElement("AMARELO")->GetText());
+	lim->vermelho = Uteis::Split_String_Pair(root->FirstChildElement("VERMELHO")->GetText());
+	lim->probabilidade_avaria = root->FirstChildElement("PROB_AVARIA")->IntText();
+
+	return lim;
+}
+
 bool Fabrica::Load(const string &ficheiro) {
 	using namespace tinyxml2;
 
@@ -38,20 +47,20 @@ bool Fabrica::Load(const string &ficheiro) {
 
 	doc.LoadFile(ficheiro.c_str());
 	if (doc.Error()) {
-		cout << "Erro ao abrir ficheiro XML" << endl;
+		cout << "[" << __FUNCTION__ << "] Erro ao abrir ficheiro XML" << endl;
 		return false;
 	}
 
 	XMLElement *root = doc.FirstChildElement("DADOS");
 	if (!root) {
-		cout << "Ficheiro XML mal formado" << endl;
+		cout << "[" << __FUNCTION__ << "] [DADOS] Ficheiro XML mal formado" << endl;
 		return false;
 	}
 
 	{
 		XMLElement *definicoes = root->FirstChildElement("DEFINICOES");
 		if (!definicoes) {
-			cout << "Ficheiro XML mal formado" << endl;
+			cout << "[" << __FUNCTION__ << "] [DEFINICOES] Ficheiro XML mal formado" << endl;
 			return false;
 		}
 
@@ -61,22 +70,22 @@ bool Fabrica::Load(const string &ficheiro) {
 		this->vizinhanca_aviso = definicoes->FirstChildElement("VIZINHANCA_AVISO")->IntText();
 
 		string dimensoes = definicoes->FirstChildElement("DIMENSAO_FABRICA")->GetText();
-		int *dim = Uteis::Split_String_Coordenadas(dimensoes);
-		dimensao_x = dim[0];
-		dimensao_y = dim[1];
+		Pair *dims = Uteis::Split_String_Pair(dimensoes);
+		dimensao_x = dims->Get_X();
+		dimensao_y = dims->Get_Y();
 
-		XMLElement *meletrico = definicoes->FirstChildElement("MELETRICO");
-		MOTOR_LIMITS limites;
+		MOTOR_LIMITS lim1, lim2, lim3;
 
-		limites.verde = Uteis::Split_String_Coordenadas(meletrico->FirstChildElement("MIN")->GetText());
-		limites.amarelo = meletrico->FirstChildElement("MAX")->IntText();
-		limites.vermelho = meletrico->FirstChildElement("STEP")->IntText();
+		limites_motores.insert({"MELETRICO", Extrair_Limites_Motor(definicoes->FirstChildElement("MELETRICO"), &lim1)});
+		limites_motores.insert(
+			{"MCOMBUSTAO", Extrair_Limites_Motor(definicoes->FirstChildElement("MCOMBUSTAO"), &lim2)});
+		limites_motores.insert({"MINDUCAO", Extrair_Limites_Motor(definicoes->FirstChildElement("MINDUCAO"), &lim3)});
 	}
 
 	{
 		XMLElement *motores = root->FirstChildElement("MOTORES");
 		if (!motores) {
-			cout << "Ficheiro XML mal formado" << endl;
+			cout << "[" << __FUNCTION__ << "] [MOTORES] Ficheiro XML mal formado" << endl;
 			return false;
 		}
 
@@ -89,21 +98,71 @@ bool Fabrica::Load(const string &ficheiro) {
 			int id = motor->FirstChildElement("ID")->IntText();
 			string marca = motor->FirstChildElement("MARCA")->GetText();
 			int consumo_hora = motor->FirstChildElement("CONSUMO_HORA")->IntText();
-
-			int *dims = Uteis::Split_String_Coordenadas(motor->FirstChildElement("DIMENSOES")->GetText());
+			Ponto *posicao = Uteis::Split_String_Coordenadas(motor->FirstChildElement("POSICAO")->GetText());
 			Motor *m;
 
 			if (nome == "MCOMBUSTAO") {
-				m = new MCombostao(id, marca, consumo_hora, dims[0], dims[1]);
+				MOTOR_LIMITS *limites = limites_motores.at("MCOMBUSTAO");
+				m = new MCombostao(id, marca, consumo_hora, limites->amarelo->Get_X(), limites->vermelho->Get_X(),
+								   limites->probabilidade_avaria, posicao);
 			} else if (nome == "MELETRICO") {
-				m = new MEletrico(id, marca, consumo_hora, dims[0], dims[1]);
-			} /*else if (nome == "MINDUCAO") {
-				m = new MInducao(id, marca, consumo_hora, dims[0], dims[1]);
-			}*/
+				MOTOR_LIMITS *limites = limites_motores.at("MELETRICO");
+				m = new MEletrico(id, marca, consumo_hora, limites->amarelo->Get_X(), limites->vermelho->Get_X(),
+								  limites->probabilidade_avaria, posicao);
+			} else if (nome == "MINDUCAO") {
+				MOTOR_LIMITS *limites = limites_motores.at("MINDUCAO");
+				m = new MInducao(id, marca, consumo_hora, limites->amarelo->Get_X(), limites->vermelho->Get_X(),
+								 limites->probabilidade_avaria, posicao);
+			}
 
-			Add(m);
+			Motores->push_back(m);
+
+			motor_node = motor_node->NextSibling();
 		}
 	}
+
+	{
+		XMLElement *sensores = root->FirstChildElement("SENSORES");
+		if (!sensores) {
+			cout << "[" << __FUNCTION__ << "] [SENSORES] Ficheiro XML mal formado" << endl;
+			return false;
+		}
+
+		XMLNode *sensor_node = sensores->FirstChild();
+		while (sensor_node) {
+			XMLElement *sensor = sensor_node->ToElement();
+
+			string nome = sensor->Name();
+
+			int id = sensor->FirstChildElement("ID")->IntText();
+			string marca = sensor->FirstChildElement("MARCA")->GetText();
+			int valor_aviso = sensor->FirstChildElement("VALOR_AVISO")->IntText();
+			Ponto *posicao = Uteis::Split_String_Coordenadas(sensor->FirstChildElement("POSICAO")->GetText());
+			int probabilidade_avaria = sensor->FirstChildElement("PROB_AVARIA")->IntText();
+
+			Sensor *s;
+
+			if (nome == "SLUZ") {
+				s = new SLuz(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			} else if (nome == "SHUMIDADE") {
+				s = new SHumidade(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			} else if (nome == "SFUMO") {
+				s = new SFumo(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			} else if (nome == "SMISSIL") {
+				s = new SMissil(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			} else if (nome == "SFOGO") {
+				s = new SFogo(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			} else if (nome == "STEMPERATURA") {
+				s = new STemperatura(id, marca, valor_aviso, probabilidade_avaria, posicao);
+			}
+
+			Sensores->push_back(s);
+
+			sensor_node = sensor_node->NextSibling();
+		}
+	}
+
+	return true;
 }
 
 bool Fabrica::Add(User *ut) {
@@ -184,6 +243,8 @@ int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
 	}
 
 	system(fich_video.c_str());
+
+	return 0;
 }
 
 int Fabrica::Aviso_Luz(string fich_video) {}

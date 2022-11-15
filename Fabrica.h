@@ -17,7 +17,7 @@ using namespace std;
 #define TEMPERATURA_MANUTENCAO 10
 
 typedef struct MotorLimits {
-	Pair *verde, amarelo, vermelho;
+	Pair *verde, *amarelo, *vermelho;
 	int probabilidade_avaria;
 } MOTOR_LIMITS;
 
@@ -29,7 +29,7 @@ class Fabrica {
 	int dimensao_x;
 	int dimensao_y;
 
-	map<string, MOTOR_LIMITS> limites_motores;
+	map<string, MOTOR_LIMITS *> limites_motores;
 
 	list<User *> *Users;
 	list<Sensor *> *Sensores;
@@ -38,6 +38,7 @@ class Fabrica {
 	User *User_Atual;
 
 	bool Tem_User_Atual(const string fname);
+	MOTOR_LIMITS *Extrair_Limites_Motor(tinyxml2::XMLElement *root, MOTOR_LIMITS *lim);
 
 public:
 	Fabrica();

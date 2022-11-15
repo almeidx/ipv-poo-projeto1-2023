@@ -1,6 +1,7 @@
 #ifndef UTEIS_H
 #define UTEIS_H
 
+#include <cmath>
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -45,14 +46,12 @@ public:
 		return result;
 	}
 
-	static int *Split_String_Coordenadas(string str) {
+	static Ponto *Split_String_Coordenadas(string str) {
 		list<string> coords = Uteis::Split_String(str, ',');
-		int *coordenadas = new int[2];
 
-		coordenadas[0] = stoi(coords.front());
-		coordenadas[1] = stoi(coords.back());
+		int x = stoi(coords.front()), y = stoi(coords.back());
 
-		return coordenadas;
+		return new Ponto(x, y);
 	}
 
 	static Pair *Split_String_Pair(string str) {

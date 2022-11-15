@@ -1,6 +1,7 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
+#include "Uteis.h"
 #include <iostream>
 #include <string>
 
@@ -23,13 +24,13 @@ class Motor {
 
 	float temperatura;
 	ESTADO_MOTOR estado;
-	int x, y;
+	Ponto *posicao;
 
 	bool Esta_Avariado(const string fname);
 
 public:
 	Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-		  float probabilidade_avariada, int x, int y);
+		  float probabilidade_avariada, Ponto *posicao);
 	~Motor();
 	bool RUN();
 	void START();
@@ -46,24 +47,24 @@ public:
 class MCombostao : public Motor {
 public:
 	MCombostao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			   float probabilidade_avariada, int x, int y)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, x, y) {}
+			   float probabilidade_avariada, Ponto *posicao)
+		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MCombostao();
 };
 
 class MEletrico : public Motor {
 public:
 	MEletrico(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			  float probabilidade_avariada, int x, int y)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, x, y) {}
+			  float probabilidade_avariada, Ponto *posicao)
+		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MEletrico();
 };
 
 class MInducao : public Motor {
 public:
 	MInducao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			 float probabilidade_avariada, int x, int y)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, x, y) {}
+			 float probabilidade_avariada, Ponto *posicao)
+		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MInducao();
 };
 
