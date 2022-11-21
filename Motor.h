@@ -20,6 +20,7 @@ class Motor {
 	float consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, temperatura;
 	ESTADO_MOTOR estado;
 	Ponto *posicao;
+	int avarias;
 
 	bool Esta_Avariado(const string fname);
 
@@ -36,6 +37,10 @@ public:
 	ESTADO_MOTOR Get_Estado() { return estado; }
 	void Set_Estado(ESTADO_MOTOR estado) { this->estado = estado; }
 	float Get_Temperatura() { return temperatura; }
+	float Get_ProbAvar() { return probabilidade_avariada; }
+	int Get_Avarias() { return avarias; }
+	void Inc_Avarias() { avarias++; }
+	string Get_Marca() { return marca; }
 	void Set_Temperatura(float temperatura) { this->temperatura = temperatura; }
 	Ponto *Get_Posicao() { return posicao; }
 	virtual string Get_Tipo() { return "???"; }

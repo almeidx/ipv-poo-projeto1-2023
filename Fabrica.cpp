@@ -1,4 +1,5 @@
 #include "Fabrica.h"
+#include "Uteis.h"
 
 Fabrica::Fabrica() {
 	nome = "???";
@@ -261,14 +262,47 @@ bool Fabrica::Manutencao() {
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		(*it)->Set_Temperatura(TEMPERATURA_MANUTENCAO);
 		(*it)->Set_Estado(ESTADO_MOTOR::RUN);
+		(*it)->Inc_Avarias();
 	}
 
 	return true;
 }
+bool myCmp(Motor *motor1, Motor *motor2) {
+	/* float s1_ = atof(Uteis::Split_String(s1, '-').front().c_str());
+	float s2_ = atof(Uteis::Split_String(s2, '-').front().c_str()); */
 
-list<string> Fabrica::Ranking_Dos_Fracos() {}
+	int motor1_ = motor1->Get_Avarias();
+	int motor2_ = motor2->Get_Avarias();
 
-list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {}
+	return motor1_ < motor2_;
+}
+
+list<string> Fabrica::Ranking_Dos_Fracos() {
+	list<Motor *> mylist;
+
+	map<string, int> MaisAv;
+
+	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
+
+		string marca = (*it)->Get_Marca();
+		int avarias_map = MaisAv[marca] || 0;
+		MaisAv[marca] = avarias_map + (*it)->Get_Avarias();
+	}
+	sort(mylist.begin(), mylist.end(), myCmp);
+}
+
+list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
+	/* list<Motor *> mylist;
+	sort(mylist.begin(), mylist.end(), myCmp);
+
+	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
+
+		string av =	to_string((*it)->Get_Avarias());
+		mylist.push_back( (*it)->Get_Marca() + " - " + av);
+	}
+
+	return mylist; */
+}
 
 void Fabrica::Relatorio(string fich_xml) {}
 
