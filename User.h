@@ -6,8 +6,7 @@
 using namespace std;
 
 class User {
-	string id;
-	string nome;
+	string id, nome;
 
 public:
 	User();

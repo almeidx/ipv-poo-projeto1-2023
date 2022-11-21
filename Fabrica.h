@@ -10,11 +10,13 @@
 #include "Sensor.h"
 #include "User.h"
 #include "Uteis.h"
+#include "XMLWriter.h"
 #include "tinyxml2.h"
 
 using namespace std;
 
 #define TEMPERATURA_MANUTENCAO 10
+#define DISTANCIA_MAXIMA_SENSOR_FUMO 10
 
 typedef struct MotorLimits {
 	Pair *verde, *amarelo, *vermelho;
@@ -23,11 +25,7 @@ typedef struct MotorLimits {
 
 class Fabrica {
 	string nome;
-	int hora_inicio;
-	int hora_fecho;
-	int vizinhanca_aviso;
-	int dimensao_x;
-	int dimensao_y;
+	int hora_inicio, hora_fecho, vizinhanca_aviso, dimensao_x, dimensao_y;
 
 	map<string, MOTOR_LIMITS *> limites_motores;
 

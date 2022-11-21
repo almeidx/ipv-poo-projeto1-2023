@@ -20,7 +20,13 @@ Fabrica::Fabrica(User *ut) : Fabrica() {
 	Users->push_back(ut);
 }
 
-Fabrica::~Fabrica() { cout << "Destruindo Fabrica" << endl; }
+Fabrica::~Fabrica() {
+	delete Users;
+	delete Sensores;
+	delete Motores;
+
+	cout << "Destruindo Fabrica" << endl;
+}
 
 bool Fabrica::Tem_User_Atual(const string fname) {
 	if (!User_Atual) {
@@ -193,7 +199,10 @@ bool Fabrica::Add(Motor *m) {
 	return false;
 }
 
-void Fabrica::Listar(ostream &f) {}
+void Fabrica::Listar(ostream &f) {
+	//
+	f << "Nome da fábrica: " << nome << endl;
+}
 
 void Fabrica::Desligar(int id_motor) {
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
@@ -211,10 +220,38 @@ ESTADO_MOTOR Fabrica::Get_Estado(int id_motor) {
 		}
 	}
 
+	// Caso não seja encontrado um motor, assumir que está avariado
 	return ESTADO_MOTOR::AVARIADO;
 }
 
-list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {}
+list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
+	list<Motor *> motores;
+
+	if (Motores->empty()) {
+		f << "[" << __FUNCTION__ << "] Não existem motores na fábrica" << endl;
+		return motores;
+	}
+
+	f << "Motores do tipo " << Tipo << ":" << endl;
+
+	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
+		if ((*it)->Get_Tipo() == Tipo) {
+			f << "ID: " << (*it)->Get_Id() << endl;
+			f << "Estado: " << (*it)->Get_Estado() << endl;
+			f << "Temperatura: " << (*it)->Get_Temperatura() << endl;
+
+			f << string(10, '-') << endl;
+
+			motores.push_back(*it);
+		}
+	}
+
+	if (motores.empty()) {
+		f << "[" << __FUNCTION__ << "] Não existem motores do tipo " << Tipo << " na fábrica" << endl;
+	}
+
+	return motores;
+}
 
 bool Fabrica::Manutencao() {
 	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Manutencao() || Motores->empty()) {
@@ -235,18 +272,68 @@ list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {}
 
 void Fabrica::Relatorio(string fich_xml) {}
 
-int Fabrica::Aviso_Humidade(list<Motor *> &lm) {}
+int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
+	// Guardamos o tamanho inicial da lista pois pode não estar vazia
+	size_t tam_inicial = lm.size();
+
+	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
+		if ((*it_sensor)->Get_Tipo() == "Humidade" && (*it_sensor)->Em_Alerta()) {
+			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
+				Ponto *posicao_sensor = (*it_sensor)->Get_Posicao(), *posicao_motor = (*it_motor)->Get_Posicao();
+
+				if (posicao_sensor->Distancia(*posicao_motor) <= DISTANCIA_MAXIMA_SENSOR_FUMO) {
+					lm.push_back(*it_motor);
+				}
+			}
+		}
+	}
+
+	return lm.size() - tam_inicial;
+}
 
 int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
-	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
-		(*it)->STOP();
+	// Guardamos o tamanho inicial da lista pois pode não estar vazia
+	size_t tam_inicial = lm.size();
+
+	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
+		if ((*it_sensor)->Get_Tipo() == "Fumo" && (*it_sensor)->Em_Alerta()) {
+			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
+				(*it_motor)->STOP();
+
+				lm.push_back(*it_motor);
+			}
+		}
 	}
 
 	system(fich_video.c_str());
 
+	return lm.size() - tam_inicial;
+}
+
+int Fabrica::Aviso_Luz(string fich_video) {
+	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
+		if ((*it_sensor)->Get_Tipo() == "Luz" && (*it_sensor)->Em_Alerta()) {
+			system(fich_video.c_str());
+
+			return 1;
+		}
+	}
+
 	return 0;
 }
 
-int Fabrica::Aviso_Luz(string fich_video) {}
+void Fabrica::Aviso_Missel(string fvideo, string festado) {
+	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
+		if ((*it_sensor)->Get_Tipo() == "Missel" && (*it_sensor)->Em_Alerta()) {
+			ofstream f(festado);
 
-void Fabrica::Aviso_Missel(string fvideo, string festado) {}
+			Listar(f);
+
+			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
+				Desligar((*it_motor)->Get_Id());
+			}
+		}
+	}
+
+	system(fvideo.c_str());
+}

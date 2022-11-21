@@ -61,6 +61,9 @@ public:
 
 		return new Pair(x, y);
 	}
+
+	// https://stackoverflow.com/a/12657984/11252146
+	static int Generate_Random_Number(int min, int max) { return rand() % (max - min + 1) + min; }
 };
 
 #endif // UTEIS_H

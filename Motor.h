@@ -17,12 +17,7 @@ enum ESTADO_MOTOR {
 class Motor {
 	int id;
 	string marca;
-	float consumo_hora;
-	float temperatura_aviso;
-	float temperatura_paragem;
-	float probabilidade_avariada;
-
-	float temperatura;
+	float consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, temperatura;
 	ESTADO_MOTOR estado;
 	Ponto *posicao;
 
@@ -42,6 +37,8 @@ public:
 	void Set_Estado(ESTADO_MOTOR estado) { this->estado = estado; }
 	float Get_Temperatura() { return temperatura; }
 	void Set_Temperatura(float temperatura) { this->temperatura = temperatura; }
+	Ponto *Get_Posicao() { return posicao; }
+	virtual string Get_Tipo() { return "???"; }
 };
 
 class MCombostao : public Motor {
@@ -50,6 +47,8 @@ public:
 			   float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MCombostao();
+
+	string Get_Tipo() { return "Combustão"; }
 };
 
 class MEletrico : public Motor {
@@ -58,6 +57,8 @@ public:
 			  float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MEletrico();
+
+	string Get_Tipo() { return "Elétrico"; }
 };
 
 class MInducao : public Motor {
@@ -66,6 +67,8 @@ public:
 			 float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
 	~MInducao();
+
+	string Get_Tipo() { return "Indução"; }
 };
 
 #endif // MOTOR_H
