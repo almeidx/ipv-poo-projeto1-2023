@@ -1,5 +1,4 @@
 #include "Fabrica.h"
-#include "Uteis.h"
 
 Fabrica::Fabrica() {
 	nome = "???";
@@ -267,28 +266,25 @@ bool Fabrica::Manutencao() {
 
 	return true;
 }
+
 bool myCmp(Motor *motor1, Motor *motor2) {
 	/* float s1_ = atof(Uteis::Split_String(s1, '-').front().c_str());
 	float s2_ = atof(Uteis::Split_String(s2, '-').front().c_str()); */
 
-	int motor1_ = motor1->Get_Avarias();
-	int motor2_ = motor2->Get_Avarias();
-
-	return motor1_ < motor2_;
+	return motor1->Get_Avarias() < motor2->Get_Avarias();
 }
 
 list<string> Fabrica::Ranking_Dos_Fracos() {
-	list<Motor *> mylist;
+	list<Motor *> ranking;
 
-	map<string, int> MaisAv;
+	map<string, int> avarias_marca;
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
-
 		string marca = (*it)->Get_Marca();
-		int avarias_map = MaisAv[marca] || 0;
-		MaisAv[marca] = avarias_map + (*it)->Get_Avarias();
+		avarias_marca[marca] = (avarias_marca[marca] || 0) + (*it)->Get_Avarias();
 	}
-	sort(mylist.begin(), mylist.end(), myCmp);
+
+	sort(ranking.begin(), ranking.end(), myCmp);
 }
 
 list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {

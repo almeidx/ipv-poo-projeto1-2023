@@ -77,8 +77,8 @@ bool Motor::STOP() {
 }
 
 void Motor::ESTOU_QUENTE() {
-	STOP();
 	Inc_Avarias();
+	STOP();
 }
 
 MCombostao::~MCombostao() {}

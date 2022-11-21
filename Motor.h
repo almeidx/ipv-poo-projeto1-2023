@@ -43,6 +43,7 @@ public:
 	string Get_Marca() { return marca; }
 	void Set_Temperatura(float temperatura) { this->temperatura = temperatura; }
 	Ponto *Get_Posicao() { return posicao; }
+
 	virtual string Get_Tipo() { return "???"; }
 };
 
