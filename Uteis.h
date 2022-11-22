@@ -21,6 +21,8 @@ public:
 
 	int Get_X() { return x; }
 	int Get_Y() { return y; }
+
+	string To_String() { return to_string(Get_X()) + "," + to_string(Get_Y()); }
 };
 
 class Ponto : public Pair {

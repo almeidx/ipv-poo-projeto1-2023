@@ -12,7 +12,7 @@ class XMLWriter {
 	string filename;
 	list<string> tags;
 	int indent;
-	fstream *file;
+	ostream *file;
 
 	void write_indents() { *file << string(indent, '\t'); }
 
@@ -29,16 +29,14 @@ public:
 
 	~XMLWriter() { cout << "Destroyed " << __FUNCTION__ << endl; }
 
-	void WriteStartDocument(string ficheiro) {
-		if (file) {
-			cerr << "[" << __FUNCTION__ << "] Document has already been started" << endl;
-			return;
-		}
+	void WriteStartDocument(ostream &f) {
+		// if (file) {
+		// 	cerr << "[" << __FUNCTION__ << "] Document has already been started" << endl;
+		// 	return;
+		// }
 
-		filename = ficheiro;
 		indent = 0;
-
-		file = new fstream(filename, ios::app);
+		file = &f;
 	}
 
 	void WriteEndDocument() {
@@ -55,8 +53,8 @@ public:
 			return;
 		}
 
-		file->close();
-		delete file;
+		// file->close();
+		// delete file;
 	}
 
 	void WriteElementString(string el, string valor) {

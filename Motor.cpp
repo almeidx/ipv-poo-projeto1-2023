@@ -13,9 +13,11 @@ Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, 
 
 	temperatura = 0;
 	estado = ESTADO_MOTOR::STOP;
+
+	cout << "Motor criado com sucesso!" << endl;
 }
 
-Motor::~Motor() { cout << "Motor " << id << " destruído" << endl; }
+Motor::~Motor() { delete posicao; }
 
 bool Motor::Esta_Avariado(const string fname) {
 	if (estado == ESTADO_MOTOR::AVARIADO) {
@@ -80,9 +82,3 @@ void Motor::ESTOU_QUENTE() {
 	Inc_Avarias();
 	STOP();
 }
-
-MCombostao::~MCombostao() {}
-
-MEletrico::~MEletrico() {}
-
-MInducao::~MInducao() {}

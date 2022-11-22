@@ -52,7 +52,7 @@ public:
 	MCombostao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
 			   float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
-	~MCombostao();
+	~MCombostao() {}
 
 	string Get_Tipo() { return "Combustão"; }
 };
@@ -62,7 +62,7 @@ public:
 	MEletrico(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
 			  float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
-	~MEletrico();
+	~MEletrico() {}
 
 	string Get_Tipo() { return "Elétrico"; }
 };
@@ -72,7 +72,7 @@ public:
 	MInducao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
 			 float probabilidade_avariada, Ponto *posicao)
 		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, probabilidade_avariada, posicao) {}
-	~MInducao();
+	~MInducao() {}
 
 	string Get_Tipo() { return "Indução"; }
 };
