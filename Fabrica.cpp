@@ -267,15 +267,8 @@ bool Fabrica::Manutencao() {
 	return true;
 }
 
-bool myCmp(Motor *motor1, Motor *motor2) {
-	/* float s1_ = atof(Uteis::Split_String(s1, '-').front().c_str());
-	float s2_ = atof(Uteis::Split_String(s2, '-').front().c_str()); */
-
-	return motor1->Get_Avarias() < motor2->Get_Avarias();
-}
-
 list<string> Fabrica::Ranking_Dos_Fracos() {
-	list<Motor *> ranking;
+	list<string> ranking;
 
 	map<string, int> avarias_marca;
 
@@ -284,7 +277,15 @@ list<string> Fabrica::Ranking_Dos_Fracos() {
 		avarias_marca[marca] = (avarias_marca[marca] || 0) + (*it)->Get_Avarias();
 	}
 
-	sort(ranking.begin(), ranking.end(), myCmp);
+	sort(avarias_marca.begin(), avarias_marca.end(),
+		 [](pair<string, int> a, pair<string, int> b) { return a.second < b.second; });
+
+	map<string, int>::iterator it;
+	for (it = avarias_marca.begin(); it != avarias_marca.end(); it++) {
+		ranking.push_back(it->first);
+	}
+
+	return ranking;
 }
 
 list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
@@ -293,8 +294,8 @@ list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 
-		string av =	to_string((*it)->Get_Avarias());
-		mylist.push_back( (*it)->Get_Marca() + " - " + av);
+		string av = to_string((*it)->Get_Avarias());
+		mylist.push_back((*it)->Get_Marca() + " - " + av);
 	}
 
 	return mylist; */
