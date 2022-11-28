@@ -2,6 +2,7 @@
 #define UTEIS_H
 
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <list>
 #include <sstream>
@@ -12,6 +13,11 @@ class Pair {
 	int x, y;
 
 public:
+	Pair() {
+		x = 0;
+		y = 0;
+	}
+
 	Pair(int x, int y) {
 		this->x = x;
 		this->y = y;
@@ -19,18 +25,28 @@ public:
 
 	~Pair() {}
 
-	int Get_X() { return x; }
-	int Get_Y() { return y; }
+	int Get_X() {
+		return x;
+	}
 
-	string To_String() { return to_string(Get_X()) + "," + to_string(Get_Y()); }
+	int Get_Y() {
+		return y;
+	}
+
+	string To_String() {
+		return to_string(Get_X()) + "," + to_string(Get_Y());
+	}
 };
 
 class Ponto : public Pair {
 public:
 	Ponto(int x, int y) : Pair(x, y) {}
+
 	~Ponto() {}
 
-	float Distancia(Ponto p) { return sqrt(pow(p.Get_X() - Get_X(), 2) + pow(p.Get_Y() - Get_Y(), 2)); }
+	float Distancia(Ponto p) {
+		return sqrt(pow(p.Get_X() - Get_X(), 2) + pow(p.Get_Y() - Get_Y(), 2));
+	}
 };
 
 class Uteis {
@@ -65,7 +81,16 @@ public:
 	}
 
 	// https://stackoverflow.com/a/12657984/11252146
-	static int Generate_Random_Number(int min, int max) { return rand() % (max - min + 1) + min; }
+	static int Generate_Random_Number(int min, int max) {
+		return rand() % (max - min + 1) + min;
+	}
+
+	// https://stackoverflow.com/a/29200671/11252146
+	static string Float_To_String_Precisao(float f, int precisao = 2) {
+		stringstream stream;
+		stream << fixed << setprecision(precisao) << f;
+		return stream.str();
+	}
 };
 
 #endif // UTEIS_H

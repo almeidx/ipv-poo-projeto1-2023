@@ -1,23 +1,23 @@
 #include "Motor.h"
 
 Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			 float probabilidade_avariada, Ponto *posicao) {
+			 float prob_avaria, Ponto *posicao) {
 	this->id = id;
 	this->marca = marca;
 	this->consumo_hora = consumo_hora;
 	this->temperatura_aviso = temperatura_aviso;
 	this->temperatura_paragem = temperatura_paragem;
-	this->probabilidade_avariada = probabilidade_avariada;
+	this->prob_avaria = prob_avaria;
 
 	this->posicao = posicao;
 
 	temperatura = 0;
 	estado = ESTADO_MOTOR::STOP;
-
-	cout << "Motor criado com sucesso!" << endl;
 }
 
-Motor::~Motor() { delete posicao; }
+Motor::~Motor() {
+	delete posicao;
+}
 
 bool Motor::Esta_Avariado(const string fname) {
 	if (estado == ESTADO_MOTOR::AVARIADO) {

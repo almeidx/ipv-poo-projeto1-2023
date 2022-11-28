@@ -10,4 +10,6 @@ User::User(string id, string nome) {
 	this->nome = nome;
 }
 
-User::~User() { cout << "User " << nome << " destruído" << endl; }
+User::~User() {
+	cout << "User " << nome << " destruído" << endl;
+}

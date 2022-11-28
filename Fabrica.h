@@ -20,16 +20,11 @@ using namespace std;
 #define TEMPERATURA_MANUTENCAO 10
 #define DISTANCIA_MAXIMA_SENSOR_FUMO 10
 
-typedef struct MotorLimits {
-	Pair *verde, *amarelo, *vermelho;
-	int probabilidade_avaria;
-} MOTOR_LIMITS;
-
 class Fabrica {
 	string nome;
 	int hora_inicio, hora_fecho, vizinhanca_aviso, dimensao_x, dimensao_y;
 
-	map<string, MOTOR_LIMITS *> limites_motores;
+	map<string, LimitesMotor> limites_motores;
 
 	list<User *> *Users;
 	list<Sensor *> *Sensores;
@@ -38,7 +33,7 @@ class Fabrica {
 	User *User_Atual;
 
 	bool Tem_User_Atual(const string fname);
-	MOTOR_LIMITS *Extrair_Limites_Motor(tinyxml2::XMLElement *root, MOTOR_LIMITS *lim);
+	LimitesMotor *Extrair_Limites_Motor(tinyxml2::XMLElement *root);
 
 public:
 	Fabrica();
@@ -59,6 +54,7 @@ public:
 	int Aviso_Fumo(list<Motor *> &lm, string fich_video);
 	int Aviso_Luz(string fich_video);
 	void Aviso_Missel(string fvideo, string festado = "Estado.txt");
+	string Get_Estado_Cor(Motor *motor);
 };
 
 #endif // FABRICA_H

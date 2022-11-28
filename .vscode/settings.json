@@ -51,7 +51,8 @@
     "typeinfo": "cpp",
     "map": "cpp",
     "__split_buffer": "cpp",
-    "ctime": "cpp"
+    "ctime": "cpp",
+    "iomanip": "cpp"
   },
   "editor.tabSize": 4,
   "cSpell.words": [
@@ -70,14 +71,15 @@
     "MELETRICO",
     "MINDUCAO",
     "Missel",
-    "Missil",
+    "SMISSEL",
     "posicao",
+    "Precisao",
     "Relatorio",
     "SFOGO",
     "SFUMO",
     "SHUMIDADE",
     "SLUZ",
-    "SMISSIL",
+    "SMISSEL",
     "STEMPERATURA",
     "tinyxml",
     "Uteis",

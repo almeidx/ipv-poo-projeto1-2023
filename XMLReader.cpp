@@ -1,8 +1,12 @@
 #include "XMLReader.h"
 
-XMLReader::XMLReader() { cout << "XMLReader::XMLReader()" << endl; }
+XMLReader::XMLReader() {
+	cout << "XMLReader::XMLReader()" << endl;
+}
 
-XMLReader::~XMLReader() { cout << "XMLReader::~XMLReader()" << endl; }
+XMLReader::~XMLReader() {
+	cout << "XMLReader::~XMLReader()" << endl;
+}
 
 string XMLReader::Trim_Whitespace(string line) {
 

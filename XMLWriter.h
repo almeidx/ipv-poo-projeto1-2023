@@ -9,15 +9,16 @@
 using namespace std;
 
 class XMLWriter {
-	string filename;
 	list<string> tags;
 	int indent;
 	ostream *file;
 
-	void write_indents() { *file << string(indent, '\t'); }
+	void write_indents() {
+		*file << string(indent, '\t');
+	}
 
 	bool document_started() {
-		if (!file) {
+		if (file == nullptr) {
 			cerr << "[" << __FUNCTION__ << "] Document has not been started" << endl;
 			return false;
 		}
@@ -25,9 +26,8 @@ class XMLWriter {
 	}
 
 public:
-	XMLWriter() { cout << "Created " << __FUNCTION__ << endl; }
-
-	~XMLWriter() { cout << "Destroyed " << __FUNCTION__ << endl; }
+	XMLWriter() {}
+	~XMLWriter() {}
 
 	void WriteStartDocument(ostream &f) {
 		// if (file) {
@@ -43,13 +43,8 @@ public:
 		if (!document_started())
 			return;
 
-		if (filename.empty()) {
-			cerr << "Called " << __FUNCTION__ << " but document has not been started" << endl;
-			return;
-		}
-
 		if (!tags.empty()) {
-			cerr << "Called " << __FUNCTION__ << " but document still has unclosed tags" << endl;
+			cerr << "[" << __FUNCTION__ << "] O documento ainda tem tags por fechar" << endl;
 			return;
 		}
 
@@ -83,7 +78,7 @@ public:
 			return;
 
 		if (tags.empty()) {
-			cerr << "Called " << __FUNCTION__ << " but the tags list is empty" << endl;
+			cerr << "[" << __FUNCTION__ << "] A lista de tags está vazia" << endl;
 			return;
 		}
 
