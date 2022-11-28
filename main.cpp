@@ -12,7 +12,12 @@ int main(void) {
 
 	fabrica.Listar_Tipo("Combustão");
 
-	fabrica.Listar();
+	// fabrica.Listar();
+	list<string> fracos = fabrica.Ranking_Dos_Fracos();
+
+	for (list<string>::iterator it = fracos.begin(); it != fracos.end(); ++it) {
+		cout << *it << endl;
+	}
 
 	return 0;
 }

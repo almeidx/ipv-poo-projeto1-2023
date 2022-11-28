@@ -301,21 +301,34 @@ bool Fabrica::Manutencao() {
 	return true;
 }
 
+bool Sort_Marcas(pair<string, int> &a, pair<string, int> &b) {
+	//
+	return a.second < b.second;
+}
+
 list<string> Fabrica::Ranking_Dos_Fracos() {
 	list<string> ranking;
-
 	map<string, int> avarias_marca;
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		string marca = (*it)->Get_Marca();
-		avarias_marca[marca] = (avarias_marca[marca] || 0) + (*it)->Get_Avarias();
+		int curr;
+
+		if (avarias_marca.count(marca) == 0) {
+			curr = 0;
+
+		} else {
+			curr = avarias_marca[marca];
+		}
+
+		avarias_marca[marca] = curr + (*it)->Get_Avarias();
 	}
 
-	sort(avarias_marca.begin(), avarias_marca.end(),
-		 [](pair<string, int> a, pair<string, int> b) { return a.second < b.second; });
+	vector<pair<string, int>> vec{avarias_marca.begin(), avarias_marca.end()};
 
-	map<string, int>::iterator it;
-	for (it = avarias_marca.begin(); it != avarias_marca.end(); it++) {
+	sort(vec.begin(), vec.end(), Sort_Marcas);
+
+	for (vector<pair<string, int>>::iterator it = vec.begin(); it != vec.end(); it++) {
 		ranking.push_back(it->first);
 	}
 

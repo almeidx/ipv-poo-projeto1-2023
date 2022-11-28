@@ -50,7 +50,8 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp",
     "map": "cpp",
-    "__split_buffer": "cpp"
+    "__split_buffer": "cpp",
+    "ctime": "cpp"
   },
   "editor.tabSize": 4,
   "cSpell.words": [
