@@ -43,6 +43,9 @@ MOTOR_LIMITS *Fabrica::Extrair_Limites_Motor(tinyxml2::XMLElement *root, MOTOR_L
 	lim->vermelho = Uteis::Split_String_Pair(root->FirstChildElement("VERMELHO")->GetText());
 	lim->probabilidade_avaria = root->FirstChildElement("PROB_AVARIA")->IntText();
 
+	cout << "verde: " << lim->verde->To_String() << endl;
+	cout << "prob_avaria: " << lim->probabilidade_avaria << endl;
+
 	return lim;
 }
 
@@ -200,8 +203,39 @@ bool Fabrica::Add(Motor *m) {
 }
 
 void Fabrica::Listar(ostream &f) {
-	//
-	f << "Nome da fábrica: " << nome << endl;
+	XMLWriter writer;
+
+	writer.WriteStartDocument(f);
+
+	writer.WriteStartElement("DADOS");
+	writer.WriteStartElement("DEFINICOES");
+
+	writer.WriteElementString("NOME_EMPRESA", nome);
+	writer.WriteElementString("HORA_INICIO", to_string(hora_inicio));
+	writer.WriteElementString("HORA_FECHO", to_string(hora_fecho));
+	writer.WriteElementString("VIZINHANCA_AVISO", to_string(vizinhanca_aviso));
+	writer.WriteElementString("DIMENSAO_FABRICA", to_string(dimensao_x) + "," + to_string(dimensao_y));
+
+	for (map<string, MOTOR_LIMITS *>::iterator it = limites_motores.begin(); it != limites_motores.end(); it++) {
+		writer.WriteStartElement(it->first);
+
+		// TODO: seg fault
+		cout << "a: " << it->second << endl;
+
+		MOTOR_LIMITS *limites = it->second;
+
+		writer.WriteElementString("VERDE", limites->verde->To_String());
+		writer.WriteElementString("AMARELO", limites->amarelo->To_String());
+		writer.WriteElementString("VERMELHO", limites->vermelho->To_String());
+		writer.WriteElementString("PROB_AVARIA", to_string(limites->probabilidade_avaria));
+
+		writer.WriteEndElement();
+	}
+
+	writer.WriteEndElement();
+	writer.WriteEndElement();
+
+	writer.WriteEndDocument();
 }
 
 void Fabrica::Desligar(int id_motor) {

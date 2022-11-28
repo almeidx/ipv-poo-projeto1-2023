@@ -6,11 +6,13 @@ int main(void) {
 	// Dar seed ao gerador de números "aleatórios"
 	srand(time(NULL));
 
-	Fabrica f;
+	Fabrica fabrica;
 
-	f.Load("fabrica.xml");
+	fabrica.Load("fabrica.xml");
 
-	f.Listar_Tipo("Combustão");
+	fabrica.Listar_Tipo("Combustão");
+
+	fabrica.Listar();
 
 	return 0;
 }
