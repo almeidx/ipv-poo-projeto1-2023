@@ -56,6 +56,7 @@ class Motor {
 	ESTADO_MOTOR estado;
 	Ponto *posicao;
 	int avarias;
+	int horas_trabalho;
 
 	bool Esta_Avariado(const string fname);
 
@@ -84,6 +85,9 @@ public:
 	ESTADO_MOTOR Get_Estado() {
 		return estado;
 	}
+	int Get_Horas_Trabalho() {
+		return horas_trabalho;
+	}
 	string Get_Marca() {
 		return marca;
 	}
@@ -105,6 +109,9 @@ public:
 	}
 	void Inc_Avarias() {
 		avarias++;
+	}
+	void Inc_HorasTrabalho() {
+		horas_trabalho++;
 	}
 	void Inc_Consumo_Atual(float consumo) {
 		consumo_atual += Uteis::Generate_Random_Number(100, 1000) / 100.0f;
