@@ -55,8 +55,8 @@ class Motor {
 	float consumo_hora, consumo_atual, temperatura_aviso, temperatura_paragem, prob_avaria, temperatura;
 	ESTADO_MOTOR estado;
 	Ponto *posicao;
-	int avarias;
-	int horas_trabalho;
+	int avarias, horas_trabalho;
+	clock_t hora_comeco;
 
 	bool Esta_Avariado(const string fname);
 
@@ -110,10 +110,10 @@ public:
 	void Inc_Avarias() {
 		avarias++;
 	}
-	void Inc_HorasTrabalho() {
+	void Inc_Horas_Trabalho() {
 		horas_trabalho++;
 	}
-	void Inc_Consumo_Atual(float consumo) {
+	void Inc_Consumo_Atual() {
 		consumo_atual += Uteis::Generate_Random_Number(100, 1000) / 100.0f;
 	}
 
@@ -126,6 +126,7 @@ public:
 		case ESTADO_MOTOR::RUN:
 			return "RUN";
 		case ESTADO_MOTOR::AVARIADO:
+		default:
 			return "AVARIADO";
 		}
 	}

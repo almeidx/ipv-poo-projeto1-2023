@@ -30,11 +30,6 @@ public:
 	~XMLWriter() {}
 
 	void WriteStartDocument(ostream &f) {
-		// if (file) {
-		// 	cerr << "[" << __FUNCTION__ << "] Document has already been started" << endl;
-		// 	return;
-		// }
-
 		indent = 0;
 		file = &f;
 	}
@@ -47,9 +42,6 @@ public:
 			cerr << "[" << __FUNCTION__ << "] O documento ainda tem tags por fechar" << endl;
 			return;
 		}
-
-		// file->close();
-		// delete file;
 	}
 
 	void WriteElementString(string el, string valor) {

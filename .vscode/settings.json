@@ -58,6 +58,7 @@
   "cSpell.words": [
     "Combostao",
     "COMBUSTAO",
+    "comeco",
     "DEFINICOES",
     "dimensao",
     "dimensoes",
@@ -71,10 +72,10 @@
     "MELETRICO",
     "MINDUCAO",
     "Missel",
-    "SMISSEL",
     "posicao",
     "Precisao",
     "Relatorio",
+    "Relogio",
     "SFOGO",
     "SFUMO",
     "SHUMIDADE",
@@ -86,5 +87,9 @@
     "vizinhanca"
   ],
   "cmake.configureOnOpen": false,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "search.exclude": {
+    "tinyxml2.cpp": true,
+    "tinyxml2.h": true
+  }
 }

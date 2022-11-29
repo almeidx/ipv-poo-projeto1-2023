@@ -13,6 +13,7 @@ Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, 
 
 	temperatura = 0;
 	estado = ESTADO_MOTOR::STOP;
+	hora_comeco = 0;
 }
 
 Motor::~Motor() {
@@ -41,6 +42,7 @@ bool Motor::RUN() {
 	temperatura += 0.1f;
 	if (temperatura > temperatura_aviso) {
 		ESTOU_QUENTE();
+		Inc_Consumo_Atual();
 	}
 
 	return true;

@@ -12,6 +12,8 @@ Fabrica::Fabrica() {
 	this->Sensores = new list<Sensor *>;
 	this->Motores = new list<Motor *>;
 
+	this->Relogio = new RelogioFabrica(500);
+
 	User_Atual = nullptr;
 }
 
@@ -24,6 +26,7 @@ Fabrica::~Fabrica() {
 	delete Users;
 	delete Sensores;
 	delete Motores;
+	delete Relogio;
 }
 
 bool Fabrica::Tem_User_Atual(const string fname) {
@@ -81,8 +84,6 @@ bool Fabrica::Load(const string &ficheiro) {
 		list<string> tipos = {"MELETRICO", "MCOMBUSTAO", "MINDUCAO"};
 
 		for (list<string>::iterator it = tipos.begin(); it != tipos.end(); ++it) {
-			string nome = *it;
-
 			XMLElement *tipo = definicoes->FirstChildElement(it->c_str());
 			if (!tipo) {
 				cout << "[" << __FUNCTION__ << "] [" << *it << "] Ficheiro XML mal formado" << endl;
@@ -191,17 +192,20 @@ bool Fabrica::Add(User *ut) {
 }
 
 bool Fabrica::Add(Motor *m) {
-	if (!Tem_User_Atual(__FUNCTION__)) {
+	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Adicionar()) {
 		return false;
 	}
 
-	// Adicionar o motor se não estiver na lista
-	if (User_Atual->Posso_Adicionar() && find(Motores->begin(), Motores->end(), m) == Motores->end()) {
-		Motores->push_back(m);
-		return true;
+	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
+		if ((*it)->Get_Id() == m->Get_Id()) {
+			cout << "[" << __FUNCTION__ << "] Motor com ID " << m->Get_Id() << " já existe" << endl;
+			return false;
+		}
 	}
 
-	return false;
+	Motores->push_back(m);
+
+	return true;
 }
 
 string Fabrica::Get_Estado_Cor(Motor *m) {
@@ -233,15 +237,15 @@ void Fabrica::Listar(ostream &f) {
 		writer.WriteElementString("VIZINHANCA_AVISO", to_string(vizinhanca_aviso));
 		writer.WriteElementString("DIMENSAO_FABRICA", to_string(dimensao_x) + "," + to_string(dimensao_y));
 
-		for (map<string, LimitesMotor>::iterator it = limites_motores.begin(); it != limites_motores.end(); it++) {
+		for (map<string, LimitesMotor>::iterator it = limites_motores.begin(); it != limites_motores.end(); ++it) {
 			string nome = it->first;
 			LimitesMotor limites = it->second;
 
 			writer.WriteStartElement(nome);
 
-			writer.WriteElementString("VERDE", to_string(limites.Get_Verde().Get_X()));
-			writer.WriteElementString("AMARELO", to_string(limites.Get_Amarelo().Get_X()));
-			writer.WriteElementString("VERMELHO", to_string(limites.Get_Vermelho().Get_X()));
+			writer.WriteElementString("VERDE", limites.Get_Verde().To_String());
+			writer.WriteElementString("AMARELO", limites.Get_Amarelo().To_String());
+			writer.WriteElementString("VERMELHO", limites.Get_Vermelho().To_String());
 			writer.WriteElementString("PROB_AVARIA", to_string(limites.Get_Prob_Avaria()));
 
 			writer.WriteEndElement();
@@ -253,7 +257,7 @@ void Fabrica::Listar(ostream &f) {
 	{
 		writer.WriteStartElement("MOTORES");
 
-		for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); it++) {
+		for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 			Motor *m = *it;
 
 			writer.WriteStartElement(m->Get_Tipo());
@@ -275,7 +279,7 @@ void Fabrica::Listar(ostream &f) {
 	{
 		writer.WriteStartElement("SENSORES");
 
-		for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); it++) {
+		for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it) {
 			Sensor *s = *it;
 
 			writer.WriteStartElement(s->Get_Tipo());
@@ -361,12 +365,17 @@ bool Fabrica::Manutencao() {
 	return true;
 }
 
-bool Sort_Marcas(pair<string, int> &a, pair<string, int> &b) {
+bool Sort_Marcas(pair<string, int> a, pair<string, int> b) {
 	return a.second < b.second;
 }
 
 list<string> Fabrica::Ranking_Dos_Fracos() {
 	list<string> ranking;
+
+	if (Motores->empty()) {
+		return ranking;
+	}
+
 	map<string, int> avarias_marca;
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
@@ -386,7 +395,7 @@ list<string> Fabrica::Ranking_Dos_Fracos() {
 
 	sort(vec.begin(), vec.end(), Sort_Marcas);
 
-	for (vector<pair<string, int>>::iterator it = vec.begin(); it != vec.end(); it++) {
+	for (vector<pair<string, int>>::iterator it = vec.begin(); it != vec.end(); ++it) {
 		ranking.push_back(it->first);
 	}
 
@@ -404,7 +413,8 @@ list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
 		trabalhadores.push_back((*it));
 	}
 
-	sort(trabalhadores.begin(), trabalhadores.end(), Sort_Motores);
+	trabalhadores.sort(Sort_Motores);
+
 	return trabalhadores;
 }
 
@@ -419,15 +429,16 @@ void Fabrica::Relatorio(string fich_xml) {
 	writer.WriteStartElement("MOTORES");
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
-		string tipo = (*it)->Get_Tipo();
+		Motor *m = *it;
+		string tipo = m->Get_Tipo();
 
 		writer.WriteStartElement(tipo);
 
-		writer.WriteElementString("ID", to_string((*it)->Get_Id()));
-		writer.WriteElementString("MARCA", (*it)->Get_Marca());
-		writer.WriteElementString("CONSUMO_ATUAL", to_string((*it)->Get_Consumo_Atual()));
-		writer.WriteElementString("POSICAO", (*it)->Get_Posicao()->To_String());
-		writer.WriteElementString("ESTADO_ATUAL", (*it)->Get_Estado_String());
+		writer.WriteElementString("ID", to_string(m->Get_Id()));
+		writer.WriteElementString("MARCA", m->Get_Marca());
+		writer.WriteElementString("CONSUMO_ATUAL", to_string(m->Get_Consumo_Atual()));
+		writer.WriteElementString("POSICAO", m->Get_Posicao()->To_String());
+		writer.WriteElementString("ESTADO_ATUAL", m->Get_Estado_String());
 
 		writer.WriteEndElement();
 	}
@@ -444,10 +455,13 @@ int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
 
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
 		if ((*it_sensor)->Get_Tipo() == "SHUMIDADE" && (*it_sensor)->Em_Alerta()) {
+			Ponto *posicao_sensor = (*it_sensor)->Get_Posicao();
 			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
-				Ponto *posicao_sensor = (*it_sensor)->Get_Posicao(), *posicao_motor = (*it_motor)->Get_Posicao();
+				Ponto *posicao_motor = (*it_motor)->Get_Posicao();
 
-				if (posicao_sensor->Distancia(*posicao_motor) <= DISTANCIA_MAXIMA_SENSOR_FUMO) {
+				if (abs(posicao_sensor->Distancia(*posicao_motor)) <= DISTANCIA_MAXIMA_SENSOR_FUMO) {
+					(*it_motor)->STOP();
+
 					lm.push_back(*it_motor);
 				}
 			}

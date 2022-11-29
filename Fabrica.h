@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Motor.h"
+#include "Relogio.h"
 #include "Sensor.h"
 #include "User.h"
 #include "Uteis.h"
@@ -31,6 +32,7 @@ class Fabrica {
 	list<Motor *> *Motores;
 
 	User *User_Atual;
+	RelogioFabrica *Relogio;
 
 	bool Tem_User_Atual(const string fname);
 	LimitesMotor *Extrair_Limites_Motor(tinyxml2::XMLElement *root);
@@ -55,6 +57,10 @@ public:
 	int Aviso_Luz(string fich_video);
 	void Aviso_Missel(string fvideo, string festado = "Estado.txt");
 	string Get_Estado_Cor(Motor *motor);
+
+	clock_t Get_Time() {
+		return Relogio->GetTime();
+	}
 };
 
 #endif // FABRICA_H
