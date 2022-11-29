@@ -394,17 +394,20 @@ list<string> Fabrica::Ranking_Dos_Fracos() {
 	return ranking;
 }
 
+bool Comparacao_Motores(Motor *m1, Motor *m2) {
+	//
+	return m1->Get_Horas_Trabalho() < m2->Get_Horas_Trabalho();
+}
+
 list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
-	/* list<Motor *> mylist;
-	sort(mylist.begin(), mylist.end(), myCmp);
+	list<Motor *> trabalhadores;
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
-
-		string av = to_string((*it)->Get_Avarias());
-		mylist.push_back((*it)->Get_Marca() + " - " + av);
+		trabalhadores.push_back((*it));
 	}
 
-	return mylist; */
+	sort(trabalhadores.begin(), trabalhadores.end(), Comparacao_Motores);
+	return trabalhadores;
 }
 
 void Fabrica::Relatorio(string fich_xml) {
