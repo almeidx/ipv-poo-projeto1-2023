@@ -362,7 +362,6 @@ bool Fabrica::Manutencao() {
 }
 
 bool Sort_Marcas(pair<string, int> &a, pair<string, int> &b) {
-	//
 	return a.second < b.second;
 }
 
@@ -394,8 +393,7 @@ list<string> Fabrica::Ranking_Dos_Fracos() {
 	return ranking;
 }
 
-bool Comparacao_Motores(Motor *m1, Motor *m2) {
-	//
+bool Sort_Motores(Motor *m1, Motor *m2) {
 	return m1->Get_Horas_Trabalho() < m2->Get_Horas_Trabalho();
 }
 
@@ -406,7 +404,7 @@ list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
 		trabalhadores.push_back((*it));
 	}
 
-	sort(trabalhadores.begin(), trabalhadores.end(), Comparacao_Motores);
+	sort(trabalhadores.begin(), trabalhadores.end(), Sort_Motores);
 	return trabalhadores;
 }
 
