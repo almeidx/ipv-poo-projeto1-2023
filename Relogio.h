@@ -17,10 +17,15 @@ public:
 		cout << "Hora de Arranque = " << asctime(localtime(&START));
 	};
 
+	/** Retorna o tempo atual em segundos (unix timestamp) */
 	time_t GetTime() {
 		time_t NOW = time(0);
 		time_t Simulada = START + (NOW - START) * VELOCIDADE;
 		return Simulada;
+	}
+
+	time_t GetTimeHours() {
+		return GetTime() / 3600;
 	}
 
 	static void Wait(int s) {

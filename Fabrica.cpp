@@ -115,19 +115,19 @@ bool Fabrica::Load(const string &ficheiro) {
 
 			if (nome == "MCOMBUSTAO") {
 				LimitesMotor limites = limites_motores.at("MCOMBUSTAO");
-				m = new MCombostao(id, marca, consumo_hora, limites.Get_Amarelo().Get_X(),
+				m = new MCombostao(this, id, marca, consumo_hora, limites.Get_Amarelo().Get_X(),
 								   limites.Get_Vermelho().Get_X(), limites.Get_Prob_Avaria(), posicao);
 			} else if (nome == "MELETRICO") {
 				LimitesMotor limites = limites_motores.at("MELETRICO");
-				m = new MEletrico(id, marca, consumo_hora, limites.Get_Amarelo().Get_X(),
+				m = new MEletrico(this, id, marca, consumo_hora, limites.Get_Amarelo().Get_X(),
 								  limites.Get_Vermelho().Get_X(), limites.Get_Prob_Avaria(), posicao);
 			} else if (nome == "MINDUCAO") {
 				LimitesMotor limites = limites_motores.at("MINDUCAO");
-				m = new MInducao(id, marca, consumo_hora, limites.Get_Amarelo().Get_X(), limites.Get_Vermelho().Get_X(),
-								 limites.Get_Prob_Avaria(), posicao);
+				m = new MInducao(this, id, marca, consumo_hora, limites.Get_Amarelo().Get_X(),
+								 limites.Get_Vermelho().Get_X(), limites.Get_Prob_Avaria(), posicao);
 			}
 
-			Motores->push_back(m);
+			Add(m);
 
 			motor_node = motor_node->NextSibling();
 		}
@@ -178,17 +178,19 @@ bool Fabrica::Load(const string &ficheiro) {
 }
 
 bool Fabrica::Add(User *ut) {
-	if (!Tem_User_Atual(__FUNCTION__)) {
-		return false;
+	// Adicionar o user apenas se ainda não estiver na lista de users
+	if (User_Atual && User_Atual->Posso_Adicionar()) {
+		for (list<User *>::iterator it = Users->begin(); it != Users->end(); ++it) {
+			if ((*it)->Get_Id() == ut->Get_Id()) {
+				return false;
+			}
+		}
 	}
 
-	// Adicionar o user se não estiver na lista
-	if (User_Atual->Posso_Adicionar() && find(Users->begin(), Users->end(), ut) == Users->end()) {
-		Users->push_back(ut);
-		return true;
-	}
+	Users->push_back(ut);
+	User_Atual = ut;
 
-	return false;
+	return true;
 }
 
 bool Fabrica::Add(Motor *m) {
@@ -485,7 +487,7 @@ int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
 		}
 	}
 
-	system(fich_video.c_str());
+	system((PLAYER_VIDEO " " + fich_video).c_str());
 
 	return lm.size() - tam_inicial;
 }
@@ -515,5 +517,5 @@ void Fabrica::Aviso_Missel(string fvideo, string festado) {
 		}
 	}
 
-	system(fvideo.c_str());
+	system((PLAYER_VIDEO " " + fvideo).c_str());
 }

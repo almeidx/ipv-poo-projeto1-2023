@@ -1,7 +1,8 @@
 #include "Motor.h"
+#include "Fabrica.h"
 
-Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			 float prob_avaria, Ponto *posicao) {
+Motor::Motor(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
+			 float temperatura_paragem, float prob_avaria, Ponto *posicao) {
 	this->id = id;
 	this->marca = marca;
 	this->consumo_hora = consumo_hora;
@@ -9,11 +10,14 @@ Motor::Motor(int id, string marca, float consumo_hora, float temperatura_aviso, 
 	this->temperatura_paragem = temperatura_paragem;
 	this->prob_avaria = prob_avaria;
 
+	Ptr_Fabrica = fabrica;
+
 	this->posicao = posicao;
 
 	temperatura = 0;
 	estado = ESTADO_MOTOR::STOP;
-	hora_comeco = 0;
+	horas_trabalho = 0;
+	ultima_hora_registada = 0;
 }
 
 Motor::~Motor() {
@@ -36,6 +40,7 @@ bool Motor::RUN() {
 	// Se não estiver com estado RUN, colocar
 	if (estado != ESTADO_MOTOR::RUN) {
 		estado = ESTADO_MOTOR::RUN;
+		ultima_hora_registada = Ptr_Fabrica->Get_Horas();
 		return true;
 	}
 
@@ -43,6 +48,14 @@ bool Motor::RUN() {
 	if (temperatura > temperatura_aviso) {
 		ESTOU_QUENTE();
 		Inc_Consumo_Atual();
+
+		time_t horas_agora = Ptr_Fabrica->Get_Horas();
+
+		// Se tiver passado 1 hora desde que começou a funcionar, incrementar o número de horas de funcionamento
+		if (ultima_hora_registada + 60 > horas_agora) {
+			horas_trabalho++;
+			ultima_hora_registada = horas_agora;
+		}
 	}
 
 	return true;
@@ -62,14 +75,12 @@ void Motor::START() {
 }
 
 void Motor::RESTART() {
-	// Fazer START() apenas se o STOP() terminar com sucesso
-	if (STOP()) {
-		START();
-	}
+	STOP(false);
+	START();
 }
 
-bool Motor::STOP() {
-	if (estado == ESTADO_MOTOR::STOP) {
+bool Motor::STOP(bool warn) {
+	if (warn && estado == ESTADO_MOTOR::STOP) {
 		cout << "[" << __FUNCTION__ << "] Motor " << id << " já está parado!" << endl;
 		return false;
 	}
@@ -82,5 +93,5 @@ bool Motor::STOP() {
 
 void Motor::ESTOU_QUENTE() {
 	Inc_Avarias();
-	STOP();
+	STOP(false);
 }

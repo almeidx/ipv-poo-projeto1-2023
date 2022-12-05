@@ -1,4 +1,5 @@
 #include "Fabrica.h"
+#include "User.h"
 #include <functional>
 
 void fn_wrapper(const string fname, function<void()> fn) {
@@ -12,6 +13,9 @@ int main(void) {
 	srand(time(NULL));
 
 	Fabrica fabrica;
+	Admin admin("123", "Toze");
+
+	fn_wrapper("Add(User)", [&] { fabrica.Add(&admin); });
 
 	fn_wrapper("Load", [&] { fabrica.Load("fabrica.xml"); });
 
@@ -51,11 +55,18 @@ int main(void) {
 
 	fn_wrapper("Aviso_Missel", [&] { fabrica.Aviso_Missel("./video.mp4", "festado.xml"); });
 
-	// while (true) {
-	// 	time_t Simulada = fabrica.Get_Time();
-	// 	cout << "Simulada = " << asctime(localtime(&Simulada));
-	// 	RelogioFabrica::Wait(1);
-	// }
+	while (true) {
+		time_t Simulada = fabrica.Get_Time();
+		cout << "A executar RUN() nos motores = " << asctime(localtime(&Simulada));
+
+		list<Motor *> *m = fabrica.Get_Motores();
+
+		for (list<Motor *>::iterator it = m->begin(); it != m->end(); ++it) {
+			(*it)->RUN();
+		}
+
+		RelogioFabrica::Wait(1);
+	}
 
 	return 0;
 }

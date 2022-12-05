@@ -21,6 +21,9 @@ using namespace std;
 #define TEMPERATURA_MANUTENCAO 10
 #define DISTANCIA_MAXIMA_SENSOR_FUMO 10
 
+// #define PLAYER_VIDEO "vlc"
+#define PLAYER_VIDEO ""
+
 class Fabrica {
 	string nome;
 	int hora_inicio, hora_fecho, vizinhanca_aviso, dimensao_x, dimensao_y;
@@ -60,6 +63,14 @@ public:
 
 	clock_t Get_Time() {
 		return Relogio->GetTime();
+	}
+
+	time_t Get_Horas() {
+		return Relogio->GetTimeHours();
+	}
+
+	list<Motor *> *Get_Motores() {
+		return Motores;
 	}
 };
 

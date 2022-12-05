@@ -49,25 +49,28 @@ public:
 	}
 };
 
+class Fabrica;
+
 class Motor {
+	Fabrica *Ptr_Fabrica;
 	int id;
 	string marca;
 	float consumo_hora, consumo_atual, temperatura_aviso, temperatura_paragem, prob_avaria, temperatura;
 	ESTADO_MOTOR estado;
 	Ponto *posicao;
 	int avarias, horas_trabalho;
-	clock_t hora_comeco;
+	time_t ultima_hora_registada;
 
 	bool Esta_Avariado(const string fname);
 
 public:
-	Motor(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-		  float prob_avaria, Ponto *posicao);
+	Motor(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
+		  float temperatura_paragem, float prob_avaria, Ponto *posicao);
 	~Motor();
 	bool RUN();
 	void START();
 	void RESTART();
-	bool STOP();
+	bool STOP(bool warn = true);
 	void ESTOU_QUENTE();
 
 	int Get_Avarias() {
@@ -138,9 +141,9 @@ public:
 
 class MCombostao : public Motor {
 public:
-	MCombostao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			   float prob_avaria, Ponto *posicao)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
+	MCombostao(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
+			   float temperatura_paragem, float prob_avaria, Ponto *posicao)
+		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
 	~MCombostao() {}
 
 	string Get_Tipo() {
@@ -150,9 +153,9 @@ public:
 
 class MEletrico : public Motor {
 public:
-	MEletrico(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			  float prob_avaria, Ponto *posicao)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
+	MEletrico(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
+			  float temperatura_paragem, float prob_avaria, Ponto *posicao)
+		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
 	~MEletrico() {}
 
 	string Get_Tipo() {
@@ -162,9 +165,9 @@ public:
 
 class MInducao : public Motor {
 public:
-	MInducao(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
-			 float prob_avaria, Ponto *posicao)
-		: Motor(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
+	MInducao(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
+			 float temperatura_paragem, float prob_avaria, Ponto *posicao)
+		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
 	~MInducao() {}
 
 	string Get_Tipo() {
