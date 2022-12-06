@@ -13,69 +13,42 @@ class XMLWriter {
 	int indent;
 	ostream *file;
 
-	void write_indents() {
-		*file << string(indent, '\t');
-	}
-
-	bool document_started() {
-		if (file == nullptr) {
-			cerr << "[" << __FUNCTION__ << "] Document has not been started" << endl;
-			return false;
+	void WriteIndent() {
+		if (indent > 0) {
+			*file << string(indent, '\t');
 		}
-		return true;
 	}
 
 public:
-	XMLWriter() {}
-	~XMLWriter() {}
-
-	void WriteStartDocument(ostream &f) {
+	XMLWriter(ostream &f) {
 		indent = 0;
 		file = &f;
 	}
-
-	void WriteEndDocument() {
-		if (!document_started())
-			return;
-
-		if (!tags.empty()) {
-			cerr << "[" << __FUNCTION__ << "] O documento ainda tem tags por fechar" << endl;
-			return;
-		}
-	}
+	~XMLWriter() {}
 
 	void WriteElementString(string el, string valor) {
-		if (!document_started())
-			return;
-
-		write_indents();
+		WriteIndent();
 
 		*file << "<" << el << ">" << valor << "</" << el << ">" << endl;
 	}
 
 	void WriteStartElement(string el) {
-		if (!document_started())
-			return;
-
-		write_indents();
+		WriteIndent();
+		indent++;
 
 		*file << "<" << el << ">" << endl;
 
 		tags.push_front(el);
-		indent++;
 	}
 
 	void WriteEndElement() {
-		if (!document_started())
-			return;
-
 		if (tags.empty()) {
 			cerr << "[" << __FUNCTION__ << "] A lista de tags está vazia" << endl;
 			return;
 		}
 
 		indent--;
-		write_indents();
+		WriteIndent();
 
 		string tag_name = tags.front();
 		tags.pop_front();

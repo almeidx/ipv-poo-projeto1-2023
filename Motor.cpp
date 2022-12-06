@@ -18,6 +18,7 @@ Motor::Motor(Fabrica *fabrica, int id, string marca, float consumo_hora, float t
 	estado = ESTADO_MOTOR::STOP;
 	horas_trabalho = 0;
 	ultima_hora_registada = 0;
+	consumo_atual = 0;
 }
 
 Motor::~Motor() {

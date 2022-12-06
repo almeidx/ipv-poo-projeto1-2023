@@ -117,7 +117,7 @@ public:
 		horas_trabalho++;
 	}
 	void Inc_Consumo_Atual() {
-		consumo_atual += Uteis::Generate_Random_Number(100, 1000) / 100.0f;
+		consumo_atual += Uteis::Generate_Random_Number(100, 1000) / 1000.0;
 	}
 
 	string Get_Estado_String() {

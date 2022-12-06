@@ -49,8 +49,8 @@ public:
 
 class Uteis {
 public:
-	// https://stackoverflow.com/a/46931770
 	static list<string> Split_String(const string &s, char delim) {
+		// https://stackoverflow.com/a/46931770
 		list<string> result;
 		stringstream ss(s);
 		string item;
@@ -78,13 +78,13 @@ public:
 		return new Pair(x, y);
 	}
 
-	// https://stackoverflow.com/a/12657984/11252146
 	static int Generate_Random_Number(int min, int max) {
+		// https://stackoverflow.com/a/12657984/11252146
 		return rand() % (max - min + 1) + min;
 	}
 
-	// https://stackoverflow.com/a/29200671/11252146
 	static string Float_To_String_Precisao(float f, int precisao = 2) {
+		// https://stackoverflow.com/a/29200671/11252146
 		stringstream stream;
 		stream << fixed << setprecision(precisao) << f;
 		return stream.str();

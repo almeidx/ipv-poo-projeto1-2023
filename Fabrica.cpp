@@ -224,9 +224,7 @@ string Fabrica::Get_Estado_Cor(Motor *m) {
 }
 
 void Fabrica::Listar(ostream &f) {
-	XMLWriter writer;
-
-	writer.WriteStartDocument(f);
+	XMLWriter writer(f);
 
 	writer.WriteStartElement("DADOS");
 
@@ -300,8 +298,6 @@ void Fabrica::Listar(ostream &f) {
 	}
 
 	writer.WriteEndElement();
-
-	writer.WriteEndDocument();
 }
 
 void Fabrica::Desligar(int id_motor) {
@@ -421,10 +417,8 @@ list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
 }
 
 void Fabrica::Relatorio(string fich_xml) {
-	XMLWriter writer;
 	ofstream f(fich_xml);
-
-	writer.WriteStartDocument(f);
+	XMLWriter writer(f);
 
 	writer.WriteStartElement("DADOS");
 
@@ -438,7 +432,7 @@ void Fabrica::Relatorio(string fich_xml) {
 
 		writer.WriteElementString("ID", to_string(m->Get_Id()));
 		writer.WriteElementString("MARCA", m->Get_Marca());
-		writer.WriteElementString("CONSUMO_ATUAL", to_string(m->Get_Consumo_Atual()));
+		writer.WriteElementString("CONSUMO_ATUAL", Uteis::Float_To_String_Precisao(m->Get_Consumo_Atual()));
 		writer.WriteElementString("POSICAO", m->Get_Posicao()->To_String());
 		writer.WriteElementString("ESTADO_ATUAL", m->Get_Estado_String());
 
@@ -447,8 +441,6 @@ void Fabrica::Relatorio(string fich_xml) {
 
 	writer.WriteEndElement();
 	writer.WriteEndElement();
-
-	writer.WriteEndDocument();
 }
 
 int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
