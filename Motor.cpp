@@ -23,6 +23,8 @@ Motor::Motor(Fabrica *fabrica, int id, string marca, float consumo_hora, float t
 
 Motor::~Motor() {
 	delete posicao;
+
+	cout << "Motor " << id << " destruído" << endl;
 }
 
 bool Motor::Esta_Avariado(const string fname) {
@@ -45,18 +47,20 @@ bool Motor::RUN() {
 		return true;
 	}
 
-	temperatura += 0.1f;
+	temperatura += Uteis::Generate_Random_Float(0.1, 1.0);
 	if (temperatura > temperatura_aviso) {
 		ESTOU_QUENTE();
-		Inc_Consumo_Atual();
+		return false;
+	}
 
-		time_t horas_agora = Ptr_Fabrica->Get_Horas();
+	Inc_Consumo_Atual();
 
-		// Se tiver passado 1 hora desde que começou a funcionar, incrementar o número de horas de funcionamento
-		if (ultima_hora_registada + 60 > horas_agora) {
-			horas_trabalho++;
-			ultima_hora_registada = horas_agora;
-		}
+	time_t horas_agora = Ptr_Fabrica->Get_Horas();
+
+	// Se tiver passado 1 hora desde que começou a funcionar, incrementar o número de horas de funcionamento
+	if (ultima_hora_registada + 60 > horas_agora) {
+		horas_trabalho++;
+		ultima_hora_registada = horas_agora;
 	}
 
 	return true;
@@ -95,4 +99,34 @@ bool Motor::STOP(bool warn) {
 void Motor::ESTOU_QUENTE() {
 	Inc_Avarias();
 	STOP(false);
+}
+
+string Motor::Get_Estado_String() {
+	switch (Get_Estado()) {
+	case ESTADO_MOTOR::STOP:
+		return "STOP";
+	case ESTADO_MOTOR::START:
+		return "START";
+	case ESTADO_MOTOR::RUN:
+		return "RUN";
+	case ESTADO_MOTOR::AVARIADO:
+	default:
+		return "AVARIADO";
+	}
+}
+
+void Motor::Print() {
+	cout << string(10, '-') << " MOTOR " << string(10, '-') << endl;
+	cout << "Id:                      " << Get_Id() << endl;
+	cout << "Marca:                   " << Get_Marca() << endl;
+	cout << "Consumo por hora:        " << Uteis::Float_To_String_Precisao(Get_Consumo_Hora()) << endl;
+	cout << "Temperatura de aviso:    " << Uteis::Float_To_String_Precisao(temperatura_aviso) << endl;
+	cout << "Temperatura de paragem:  " << Uteis::Float_To_String_Precisao(temperatura_paragem) << endl;
+	cout << "Temperatura atual:       " << Uteis::Float_To_String_Precisao(Get_Temperatura()) << endl;
+	cout << "Probabilidade de avaria: " << Uteis::Float_To_String_Precisao(Get_Prob_Avaria()) << endl;
+	cout << "Estado:                  " << Get_Estado_String() << endl;
+	cout << "Horas de trabalho:       " << Get_Horas_Trabalho() << endl;
+	cout << "Consumo atual:           " << Uteis::Float_To_String_Precisao(Get_Consumo_Atual()) << endl;
+	cout << "Posição:                 " << Get_Posicao()->To_String() << endl;
+	cout << string(27, '-') << endl;
 }

@@ -38,14 +38,15 @@ public:
 	}
 
 	bool Em_Alerta() {
-		return Get_Valor() >= Get_Valor_Aviso();
+		return Get_Valor_Atual() >= Get_Valor_Aviso();
 	}
 
 	virtual string Get_Tipo() {
 		return "???";
 	}
 
-	float Get_Valor();
+	float Ler_Valor();
+	void Print();
 };
 
 class SLuz : public Sensor {

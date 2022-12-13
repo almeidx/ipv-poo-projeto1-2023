@@ -73,6 +73,9 @@ public:
 	bool STOP(bool warn = true);
 	void ESTOU_QUENTE();
 
+	string Get_Estado_String();
+	void Print();
+
 	int Get_Avarias() {
 		return avarias;
 	}
@@ -117,21 +120,7 @@ public:
 		horas_trabalho++;
 	}
 	void Inc_Consumo_Atual() {
-		consumo_atual += Uteis::Generate_Random_Number(100, 1000) / 1000.0;
-	}
-
-	string Get_Estado_String() {
-		switch (Get_Estado()) {
-		case ESTADO_MOTOR::STOP:
-			return "STOP";
-		case ESTADO_MOTOR::START:
-			return "START";
-		case ESTADO_MOTOR::RUN:
-			return "RUN";
-		case ESTADO_MOTOR::AVARIADO:
-		default:
-			return "AVARIADO";
-		}
+		consumo_atual = Uteis::Generate_Random_Float(10.0, 20.0);
 	}
 
 	virtual string Get_Tipo() {

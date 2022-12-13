@@ -13,7 +13,7 @@ public:
 	User(string id, string nome);
 	~User();
 
-	string Get_Name() {
+	string Get_Nome() {
 		return nome;
 	}
 	string Get_Id() {
@@ -35,6 +35,12 @@ public:
 	virtual bool Posso_Manutencao() {
 		return false;
 	}
+
+	virtual string Get_Tipo() {
+		return "User";
+	}
+
+	void Print();
 };
 
 class Admin : public User {
@@ -56,6 +62,10 @@ public:
 	bool Posso_Manutencao() {
 		return true;
 	}
+
+	string Get_Tipo() {
+		return "Admin";
+	}
 };
 
 class Normal : public User {
@@ -74,6 +84,10 @@ public:
 	bool Posso_Manutencao() {
 		return true;
 	}
+
+	string Get_Tipo() {
+		return "Normal";
+	}
 };
 
 class Visitante : public User {
@@ -82,6 +96,10 @@ public:
 
 	bool Posso_Listar() {
 		return true;
+	}
+
+	string Get_Tipo() {
+		return "Visitante";
 	}
 };
 

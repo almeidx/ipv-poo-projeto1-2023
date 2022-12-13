@@ -7,6 +7,12 @@
 #include <list>
 #include <sstream>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
+
 using namespace std;
 
 class Pair {
@@ -45,6 +51,18 @@ public:
 	float Distancia(Ponto p) {
 		return sqrt(pow(p.Get_X() - Get_X(), 2) + pow(p.Get_Y() - Get_Y(), 2));
 	}
+
+	static Ponto *Ler_Ponto() {
+		int x, y;
+
+		cout << "Introduza as coordenadas do ponto (x, y): ";
+		cin >> x;
+		cin.ignore();
+		cin >> y;
+		cin.ignore();
+
+		return new Ponto(x, y);
+	}
 };
 
 class Uteis {
@@ -78,9 +96,14 @@ public:
 		return new Pair(x, y);
 	}
 
-	static int Generate_Random_Number(int min, int max) {
+	static int Generate_Random_Int(int min, int max) {
 		// https://stackoverflow.com/a/12657984/11252146
 		return rand() % (max - min + 1) + min;
+	}
+
+	static float Generate_Random_Float(float min, float max) {
+		// https://stackoverflow.com/a/686373/11252146
+		return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
 	}
 
 	static string Float_To_String_Precisao(float f, int precisao = 2) {
@@ -88,6 +111,24 @@ public:
 		stringstream stream;
 		stream << fixed << setprecision(precisao) << f;
 		return stream.str();
+	}
+
+	static void Limpar_Terminal() {
+		system("clear");
+	}
+
+	static void Sleep(int seconds) {
+#ifdef _WIN32
+		Sleep(seconds * 1000);
+#else
+		sleep(seconds);
+#endif
+	}
+
+	static void Pausar() {
+		cout << "Pressione ENTER para continuar...";
+		cin.ignore();
+		cin.get();
 	}
 };
 

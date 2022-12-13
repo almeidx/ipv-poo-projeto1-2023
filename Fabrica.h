@@ -47,6 +47,7 @@ public:
 	bool Load(const string &ficheiro);
 	bool Add(User *ut);
 	bool Add(Motor *m);
+	bool Add(Sensor *s);
 	void Listar(ostream &f = cout);
 	void Desligar(int id_motor);
 	ESTADO_MOTOR Get_Estado(int id_motor);
@@ -71,6 +72,16 @@ public:
 
 	list<Motor *> *Get_Motores() {
 		return Motores;
+	}
+	list<Sensor *> *Get_Sensores() {
+		return Sensores;
+	}
+	list<User *> *Get_Users() {
+		return Users;
+	}
+
+	User *Get_User_Atual() {
+		return User_Atual;
 	}
 };
 

@@ -23,9 +23,18 @@ Fabrica::Fabrica(User *ut) : Fabrica() {
 }
 
 Fabrica::~Fabrica() {
+	Users->clear();
+
 	delete Users;
+
+	Sensores->clear();
+
 	delete Sensores;
+
+	Motores->clear();
+
 	delete Motores;
+
 	delete Relogio;
 }
 
@@ -200,12 +209,29 @@ bool Fabrica::Add(Motor *m) {
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		if ((*it)->Get_Id() == m->Get_Id()) {
-			cout << "[" << __FUNCTION__ << "] Motor com ID " << m->Get_Id() << " já existe" << endl;
+			cout << "[" << __FUNCTION__ << "] Motor com id " << m->Get_Id() << " já existe" << endl;
 			return false;
 		}
 	}
 
 	Motores->push_back(m);
+
+	return true;
+}
+
+bool Fabrica::Add(Sensor *s) {
+	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Adicionar()) {
+		return false;
+	}
+
+	for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it) {
+		if ((*it)->Get_Id() == s->Get_Id()) {
+			cout << "[" << __FUNCTION__ << "] Sensor com id " << s->Get_Id() << " já existe" << endl;
+			return false;
+		}
+	}
+
+	Sensores->push_back(s);
 
 	return true;
 }
@@ -332,7 +358,7 @@ list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		if ((*it)->Get_Tipo() == Tipo) {
-			f << "ID:          " << (*it)->Get_Id() << endl;
+			f << "Id:          " << (*it)->Get_Id() << endl;
 			f << "Estado:      " << (*it)->Get_Estado_String() << endl;
 			f << "Temperatura: " << Uteis::Float_To_String_Precisao((*it)->Get_Temperatura()) << endl;
 
@@ -487,7 +513,7 @@ int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
 int Fabrica::Aviso_Luz(string fich_video) {
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
 		if ((*it_sensor)->Get_Tipo() == "SLUZ" && (*it_sensor)->Em_Alerta()) {
-			system(fich_video.c_str());
+			system((PLAYER_VIDEO " " + fich_video).c_str());
 
 			return 1;
 		}

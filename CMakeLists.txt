@@ -8,8 +8,11 @@ include_directories(.)
 add_executable(ipv_poo_projeto1_2022
         Fabrica.cpp
         Fabrica.h
+        Menu.cpp
+        Menu.h
         Motor.cpp
         Motor.h
+        Relogio.h
         Sensor.cpp
         Sensor.h
         tinyxml2.cpp
