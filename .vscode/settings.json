@@ -95,5 +95,8 @@
   "search.exclude": {
     "tinyxml2.cpp": true,
     "tinyxml2.h": true
-  }
+  },
+  "gitlens.currentLine.enabled": false, // in modern version
+  "gitlens.codeLens.authors.enabled": false,
+  "gitlens.codeLens.recentChange.enabled": false
 }

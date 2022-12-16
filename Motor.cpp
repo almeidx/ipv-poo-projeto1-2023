@@ -10,7 +10,7 @@ Motor::Motor(Fabrica *fabrica, int id, string marca, float consumo_hora, float t
 	this->temperatura_paragem = temperatura_paragem;
 	this->prob_avaria = prob_avaria;
 
-	Ptr_Fabrica = fabrica;
+	ptr_fabrica = fabrica;
 
 	this->posicao = posicao;
 
@@ -43,7 +43,7 @@ bool Motor::RUN() {
 	// Se não estiver com estado RUN, colocar
 	if (estado != ESTADO_MOTOR::RUN) {
 		estado = ESTADO_MOTOR::RUN;
-		ultima_hora_registada = Ptr_Fabrica->Get_Horas();
+		ultima_hora_registada = ptr_fabrica->Get_Horas();
 		return true;
 	}
 
@@ -55,7 +55,7 @@ bool Motor::RUN() {
 
 	Inc_Consumo_Atual();
 
-	time_t horas_agora = Ptr_Fabrica->Get_Horas();
+	time_t horas_agora = ptr_fabrica->Get_Horas();
 
 	// Se tiver passado 1 hora desde que começou a funcionar, incrementar o número de horas de funcionamento
 	if (ultima_hora_registada + 60 > horas_agora) {

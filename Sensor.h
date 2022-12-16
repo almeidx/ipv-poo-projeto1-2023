@@ -1,6 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
+#include "Motor.h"
 #include "Uteis.h"
 #include <cstdlib>
 #include <ctime>
@@ -8,14 +9,22 @@
 
 using namespace std;
 
+#define ALERTA_LUZ_FICHEIRO_VIDEO "video.mp4"
+#define ALERTA_FUMO_FICHEIRO_VIDEO "video.mp4"
+#define ALERTA_MISSEL_FICHEIRO_VIDEO "video.mp4"
+#define ALERTA_MISSEL_FICHEIRO_ESTADO "festado-missel.mp4"
+
+class Fabrica;
+
 class Sensor {
 	int id;
 	string marca;
 	float valor, valor_aviso, prob_avaria;
 	Ponto *posicao;
+	Fabrica *ptr_fabrica;
 
 public:
-	Sensor(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao);
+	Sensor(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao);
 	~Sensor();
 
 	int Get_Id() {
@@ -27,6 +36,9 @@ public:
 	float Get_Prob_Avaria() {
 		return prob_avaria;
 	}
+	void Set_Valor_Atual(float valor) {
+		this->valor = valor;
+	}
 	float Get_Valor_Atual() {
 		return valor;
 	}
@@ -36,9 +48,12 @@ public:
 	float Get_Valor_Aviso() {
 		return valor_aviso;
 	}
+	Fabrica *Get_Fabrica() {
+		return ptr_fabrica;
+	}
 
-	bool Em_Alerta() {
-		return Get_Valor_Atual() >= Get_Valor_Aviso();
+	virtual bool Em_Alerta() {
+		return false;
 	}
 
 	virtual string Get_Tipo() {
@@ -50,10 +65,20 @@ public:
 };
 
 class SLuz : public Sensor {
+	void Avisar_Fabrica();
+
 public:
-	SLuz(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~SLuz();
+	SLuz(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			Avisar_Fabrica();
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "SLUZ";
@@ -61,10 +86,23 @@ public:
 };
 
 class SHumidade : public Sensor {
+	list<Motor *> Avisar_Fabrica();
+
 public:
-	SHumidade(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~SHumidade();
+	SHumidade(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			list<Motor *> motores_desligados = Avisar_Fabrica();
+
+			cout << "[" << __FUNCTION__ << "] Número de motores desligados: " << motores_desligados.size() << endl;
+
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "SHUMIDADE";
@@ -72,10 +110,23 @@ public:
 };
 
 class SFumo : public Sensor {
+	list<Motor *> Avisar_Fabrica();
+
 public:
-	SFumo(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~SFumo();
+	SFumo(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			list<Motor *> motores_desligados = Avisar_Fabrica();
+
+			cout << "[" << __FUNCTION__ << "] Número de motores desligados: " << motores_desligados.size() << endl;
+
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "SFUMO";
@@ -83,10 +134,20 @@ public:
 };
 
 class SMissel : public Sensor {
+	void Avisar_Fabrica();
+
 public:
-	SMissel(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~SMissel();
+	SMissel(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			Avisar_Fabrica();
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "SMISSEL";
@@ -95,9 +156,16 @@ public:
 
 class SFogo : public Sensor {
 public:
-	SFogo(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~SFogo();
+	SFogo(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "SFOGO";
@@ -106,9 +174,16 @@ public:
 
 class STemperatura : public Sensor {
 public:
-	STemperatura(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
-		: Sensor(id, marca, valor_aviso, prob_avaria, posicao) {}
-	~STemperatura();
+	STemperatura(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao)
+		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
+
+	bool Em_Alerta() {
+		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+			return true;
+		}
+
+		return false;
+	}
 
 	string Get_Tipo() {
 		return "STEMPERATURA";

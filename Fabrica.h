@@ -18,7 +18,7 @@
 
 using namespace std;
 
-#define TEMPERATURA_MANUTENCAO 10
+#define MULTIPLICADOR_RELOGIO 500
 #define DISTANCIA_MAXIMA_SENSOR_FUMO 10
 
 // #define PLAYER_VIDEO "vlc"
@@ -39,6 +39,9 @@ class Fabrica {
 
 	bool Tem_User_Atual(const string fname);
 	LimitesMotor *Extrair_Limites_Motor(tinyxml2::XMLElement *root);
+
+	static bool Sort_Motores(Motor *m1, Motor *m2);
+	static bool Sort_Marcas(pair<string, int> a, pair<string, int> b);
 
 public:
 	Fabrica();

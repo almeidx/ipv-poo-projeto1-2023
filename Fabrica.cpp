@@ -12,7 +12,7 @@ Fabrica::Fabrica() {
 	this->Sensores = new list<Sensor *>;
 	this->Motores = new list<Motor *>;
 
-	this->Relogio = new RelogioFabrica(500);
+	this->Relogio = new RelogioFabrica(MULTIPLICADOR_RELOGIO);
 
 	User_Atual = nullptr;
 }
@@ -24,15 +24,12 @@ Fabrica::Fabrica(User *ut) : Fabrica() {
 
 Fabrica::~Fabrica() {
 	Users->clear();
-
 	delete Users;
 
 	Sensores->clear();
-
 	delete Sensores;
 
 	Motores->clear();
-
 	delete Motores;
 
 	delete Relogio;
@@ -164,17 +161,17 @@ bool Fabrica::Load(const string &ficheiro) {
 			Sensor *s;
 
 			if (nome == "SLUZ") {
-				s = new SLuz(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new SLuz(this, id, marca, valor_aviso, prob_avaria, posicao);
 			} else if (nome == "SHUMIDADE") {
-				s = new SHumidade(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new SHumidade(this, id, marca, valor_aviso, prob_avaria, posicao);
 			} else if (nome == "SFUMO") {
-				s = new SFumo(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new SFumo(this, id, marca, valor_aviso, prob_avaria, posicao);
 			} else if (nome == "SMISSEL") {
-				s = new SMissel(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new SMissel(this, id, marca, valor_aviso, prob_avaria, posicao);
 			} else if (nome == "SFOGO") {
-				s = new SFogo(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new SFogo(this, id, marca, valor_aviso, prob_avaria, posicao);
 			} else if (nome == "STEMPERATURA") {
-				s = new STemperatura(id, marca, valor_aviso, prob_avaria, posicao);
+				s = new STemperatura(this, id, marca, valor_aviso, prob_avaria, posicao);
 			}
 
 			Sensores->push_back(s);
@@ -376,20 +373,24 @@ list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
 }
 
 bool Fabrica::Manutencao() {
-	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Manutencao() || Motores->empty()) {
+	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Manutencao() || (Motores->empty() && Sensores->empty())) {
 		return false;
 	}
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
-		(*it)->Set_Temperatura(TEMPERATURA_MANUTENCAO);
-		(*it)->Set_Estado(ESTADO_MOTOR::RUN);
-		(*it)->Inc_Avarias();
+		string tipo = (*it)->Get_Tipo();
+		LimitesMotor limites = limites_motores[tipo];
+		(*it)->Set_Temperatura(Uteis::Generate_Random_Float(0, limites.Get_Verde().Get_X()));
+	}
+
+	for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it) {
+		(*it)->Set_Valor_Atual(Uteis::Generate_Random_Float(0.0f, (*it)->Get_Valor_Aviso() - 1.0f));
 	}
 
 	return true;
 }
 
-bool Sort_Marcas(pair<string, int> a, pair<string, int> b) {
+bool Fabrica::Sort_Marcas(pair<string, int> a, pair<string, int> b) {
 	return a.second < b.second;
 }
 
@@ -426,7 +427,7 @@ list<string> Fabrica::Ranking_Dos_Fracos() {
 	return ranking;
 }
 
-bool Sort_Motores(Motor *m1, Motor *m2) {
+bool Fabrica::Sort_Motores(Motor *m1, Motor *m2) {
 	return m1->Get_Horas_Trabalho() < m2->Get_Horas_Trabalho();
 }
 

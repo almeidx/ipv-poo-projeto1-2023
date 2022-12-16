@@ -1,6 +1,10 @@
 #include "Menu.h"
 
-void Menu::iniciar(Fabrica *f) {
+Menu::Menu(Fabrica *f) {
+	ptr_fabrica = f;
+}
+
+void Menu::iniciar() {
 	int option;
 
 	do {
@@ -28,23 +32,28 @@ void Menu::iniciar(Fabrica *f) {
 
 	switch (option) {
 	case 1:
-		return fabrica(f);
+		fabrica();
+		break;
 
 	case 2:
-		return utilizadores(f);
+		utilizadores();
+		break;
 
 	case 3:
-		return motores(f);
+		motores();
+		break;
 
 	case 4:
-		return sensores(f);
+		sensores();
+		break;
 
 	case 5:
 		sair();
+		break;
 	}
 }
 
-void Menu::fabrica(Fabrica *fab) {
+void Menu::fabrica() {
 	int option;
 
 	do {
@@ -67,19 +76,30 @@ void Menu::fabrica(Fabrica *fab) {
 		cout << "│ 5 · Ranking dos fracos                │" << endl;
 		cout << "│ 6 · Ranking does mais trabalhadores   │" << endl;
 		cout << "│ 7 · Relatório                         │" << endl;
-		cout << "│ 8 · Voltar                            │" << endl;
+		cout << "│ 8 · Tudo a trabalhar                  │" << endl;
+		cout << "│ 9 · Voltar                            │" << endl;
 		cout << "└───────────────────────────────────────┘" << endl;
 
 		cin >> option;
-	} while (option < 1 || option > 8);
+	} while (option < 1 || option > 9);
 
 	Uteis::Limpar_Terminal();
 
 	switch (option) {
 	case 1: {
+		if (!ptr_fabrica->Get_User_Atual()) {
+			cout << "Não tem permissões para carregar um ficheiro! Tente adicionar um Administrador através do menu de "
+					"Utilizadores"
+				 << endl;
+
+			Uteis::Pausar();
+
+			break;
+		}
+
 		string filename = ler_nome_fich();
 
-		if (fab->Load(filename)) {
+		if (ptr_fabrica->Load(filename)) {
 			cout << "Ficheiro carregado com sucesso!" << endl;
 		} else {
 			cout << "Erro ao carregar o ficheiro!" << endl;
@@ -91,7 +111,7 @@ void Menu::fabrica(Fabrica *fab) {
 	}
 
 	case 2: {
-		fab->Listar();
+		ptr_fabrica->Listar();
 
 		Uteis::Pausar();
 
@@ -99,12 +119,12 @@ void Menu::fabrica(Fabrica *fab) {
 	}
 
 	case 3: {
-		fabrica_motor(fab);
+		fabrica_motor();
 		break;
 	}
 
 	case 4: {
-		if (fab->Manutencao()) {
+		if (ptr_fabrica->Manutencao()) {
 			cout << "Manutenção iniciada com sucesso!" << endl;
 		} else {
 			cout << "Erro ao iniciar a manutenção!" << endl;
@@ -116,7 +136,7 @@ void Menu::fabrica(Fabrica *fab) {
 	}
 
 	case 5: {
-		fab->Ranking_Dos_Fracos();
+		ptr_fabrica->Ranking_Dos_Fracos();
 
 		Uteis::Pausar();
 
@@ -124,7 +144,7 @@ void Menu::fabrica(Fabrica *fab) {
 	}
 
 	case 6: {
-		fab->Ranking_Dos_Mais_Trabalhadores();
+		ptr_fabrica->Ranking_Dos_Mais_Trabalhadores();
 
 		Uteis::Pausar();
 
@@ -133,7 +153,7 @@ void Menu::fabrica(Fabrica *fab) {
 
 	case 7: {
 		string filename = ler_nome_fich();
-		fab->Relatorio(filename);
+		ptr_fabrica->Relatorio(filename);
 
 		Uteis::Pausar();
 
@@ -141,12 +161,55 @@ void Menu::fabrica(Fabrica *fab) {
 	}
 
 	case 8: {
+		list<Motor *> *motores = ptr_fabrica->Get_Motores();
+		list<Sensor *> *sensores = ptr_fabrica->Get_Sensores();
+
+		if (motores->empty() && sensores->empty()) {
+			cout << "Não existe nada para colocar a trabalhar!" << endl;
+		} else {
+			int segundos;
+
+			cout << "Durante quanto tempo pretende que a fábrica esteja a trabalhar? (em segundos)" << endl;
+			cin >> segundos;
+
+			Uteis::Limpar_Terminal();
+
+			cout << "A colocar os motores e os sensores a trabalhar durante " << segundos << " segundos..." << endl;
+
+			while (segundos--) {
+				time_t tempo = ptr_fabrica->Get_Time();
+				cout << "Motores e sensores estão a trabalhar no tempo simulado: " << asctime(localtime(&tempo));
+
+				for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+					(*it)->RUN();
+				}
+
+				for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); it++) {
+					(*it)->Ler_Valor();
+				}
+
+				RelogioFabrica::Wait(1);
+			}
+
+			cout << "Trabalho terminado!" << endl;
+
+			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+				(*it)->STOP(false);
+			}
+		}
+
+		Uteis::Pausar();
+
+		break;
+	}
+
+	case 9: {
 		break;
 	}
 	}
 }
 
-void Menu::fabrica_motor(Fabrica *fab) {
+void Menu::fabrica_motor() {
 	int tipo;
 
 	do {
@@ -173,15 +236,15 @@ void Menu::fabrica_motor(Fabrica *fab) {
 
 	switch (tipo) {
 	case 1:
-		fab->Listar_Tipo("MCOMBUSTAO");
+		ptr_fabrica->Listar_Tipo("MCOMBUSTAO");
 		break;
 
 	case 2:
-		fab->Listar_Tipo("MELETRICO");
+		ptr_fabrica->Listar_Tipo("MELETRICO");
 		break;
 
 	case 3:
-		fab->Listar_Tipo("MINDUCAO");
+		ptr_fabrica->Listar_Tipo("MINDUCAO");
 		break;
 
 	case 4:
@@ -191,7 +254,7 @@ void Menu::fabrica_motor(Fabrica *fab) {
 	Uteis::Pausar();
 }
 
-void Menu::utilizadores(Fabrica *fab) {
+void Menu::utilizadores() {
 	int option;
 
 	do {
@@ -231,7 +294,7 @@ void Menu::utilizadores(Fabrica *fab) {
 
 		User *u = utilizadores_criar(id, nome);
 		if (u != nullptr) {
-			if (fab->Add(u)) {
+			if (ptr_fabrica->Add(u)) {
 				cout << "Utilizador criado com sucesso!" << endl;
 			} else {
 				cout << "Erro ao criar utilizador!" << endl;
@@ -246,7 +309,7 @@ void Menu::utilizadores(Fabrica *fab) {
 	}
 
 	case 2: {
-		User *ut = fab->Get_User_Atual();
+		User *ut = ptr_fabrica->Get_User_Atual();
 
 		if (ut != nullptr) {
 			ut->Print();
@@ -260,7 +323,7 @@ void Menu::utilizadores(Fabrica *fab) {
 	}
 
 	case 3: {
-		list<User *> *users = fab->Get_Users();
+		list<User *> *users = ptr_fabrica->Get_Users();
 
 		if (users->empty()) {
 			cout << "Não há utilizadores!" << endl;
@@ -276,7 +339,7 @@ void Menu::utilizadores(Fabrica *fab) {
 	}
 
 	case 4: {
-		list<User *> *users = fab->Get_Users();
+		list<User *> *users = ptr_fabrica->Get_Users();
 
 		if (users->empty()) {
 			cout << "Não há utilizadores!" << endl;
@@ -356,7 +419,7 @@ User *Menu::utilizadores_criar(string id, string nome) {
 	}
 }
 
-void Menu::motores(Fabrica *fab) {
+void Menu::motores() {
 	int option;
 
 	do {
@@ -407,12 +470,12 @@ void Menu::motores(Fabrica *fab) {
 		cout << "Probabilidade de avaria: ";
 		cin >> prob_avaria;
 
-		Ponto *p = Ponto::Ler_Ponto();
+		Ponto *p = Uteis::Ler_Ponto();
 
-		Motor *m = motores_criar(fab, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, p);
+		Motor *m = motores_criar(id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, p);
 
 		if (m != nullptr) {
-			if (fab->Add(m)) {
+			if (ptr_fabrica->Add(m)) {
 				cout << "Motor criado com sucesso!" << endl;
 			} else {
 				cout << "Erro ao criar motor!" << endl;
@@ -427,7 +490,7 @@ void Menu::motores(Fabrica *fab) {
 	}
 
 	case 2: {
-		list<Motor *> *motores = fab->Get_Motores();
+		list<Motor *> *motores = ptr_fabrica->Get_Motores();
 
 		if (motores->empty()) {
 			cout << "Não existem motores!" << endl;
@@ -443,7 +506,7 @@ void Menu::motores(Fabrica *fab) {
 	}
 
 	case 3: {
-		list<Motor *> *motores = fab->Get_Motores();
+		list<Motor *> *motores = ptr_fabrica->Get_Motores();
 
 		if (motores->empty()) {
 			cout << "Não existem motores!" << endl;
@@ -480,9 +543,8 @@ void Menu::motores(Fabrica *fab) {
 	}
 }
 
-Motor *Menu::motores_criar(Fabrica *fab, int id, string marca, float consumo_hora, float temperatura_aviso,
-						   float temperatura_paragem, float prob_avaria, Ponto *posicao) {
-
+Motor *Menu::motores_criar(int id, string marca, float consumo_hora, float temperatura_aviso, float temperatura_paragem,
+						   float prob_avaria, Ponto *posicao) {
 	int tipo;
 
 	do {
@@ -511,15 +573,16 @@ Motor *Menu::motores_criar(Fabrica *fab, int id, string marca, float consumo_hor
 
 	switch (tipo) {
 	case 1:
-		return new MCombostao(fab, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria,
+		return new MCombostao(ptr_fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria,
 							  posicao);
 
 	case 2:
-		return new MEletrico(fab, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria,
+		return new MEletrico(ptr_fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria,
 							 posicao);
 
 	case 3:
-		return new MInducao(fab, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao);
+		return new MInducao(ptr_fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria,
+							posicao);
 
 	case 4:
 	default:
@@ -527,7 +590,7 @@ Motor *Menu::motores_criar(Fabrica *fab, int id, string marca, float consumo_hor
 	}
 }
 
-void Menu::sensores(Fabrica *fab) {
+void Menu::sensores() {
 	int option;
 
 	do {
@@ -572,12 +635,12 @@ void Menu::sensores(Fabrica *fab) {
 		cout << "Probabilidade de avaria: ";
 		cin >> prob_avaria;
 
-		Ponto *p = Ponto::Ler_Ponto();
+		Ponto *p = Uteis::Ler_Ponto();
 
 		Sensor *s = sensores_criar(id, marca, valor_aviso, prob_avaria, p);
 
 		if (s != nullptr) {
-			if (fab->Add(s)) {
+			if (ptr_fabrica->Add(s)) {
 				cout << "Sensor criado com sucesso!" << endl;
 			} else {
 				cout << "Erro ao criar sensor!" << endl;
@@ -592,7 +655,7 @@ void Menu::sensores(Fabrica *fab) {
 	}
 
 	case 2: {
-		list<Sensor *> *sensores = fab->Get_Sensores();
+		list<Sensor *> *sensores = ptr_fabrica->Get_Sensores();
 
 		if (sensores->empty()) {
 			cout << "Não existem sensores!" << endl;
@@ -608,7 +671,7 @@ void Menu::sensores(Fabrica *fab) {
 	}
 
 	case 3: {
-		list<Sensor *> *sensores = fab->Get_Sensores();
+		list<Sensor *> *sensores = ptr_fabrica->Get_Sensores();
 
 		if (sensores->empty()) {
 			cout << "Não existem sensores!" << endl;
@@ -677,22 +740,22 @@ Sensor *Menu::sensores_criar(int id, string marca, float valor_aviso, float prob
 
 	switch (tipo) {
 	case 1:
-		return new SFogo(id, marca, valor_aviso, prob_avaria, posicao);
+		return new SFogo(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 2:
-		return new SFumo(id, marca, valor_aviso, prob_avaria, posicao);
+		return new SFumo(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 3:
-		return new SHumidade(id, marca, valor_aviso, prob_avaria, posicao);
+		return new SHumidade(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 4:
-		return new SLuz(id, marca, valor_aviso, prob_avaria, posicao);
+		return new SLuz(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 5:
-		return new SMissel(id, marca, valor_aviso, prob_avaria, posicao);
+		return new SMissel(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 6:
-		return new STemperatura(id, marca, valor_aviso, prob_avaria, posicao);
+		return new STemperatura(ptr_fabrica, id, marca, valor_aviso, prob_avaria, posicao);
 
 	case 7:
 	default:

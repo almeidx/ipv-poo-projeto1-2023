@@ -51,18 +51,6 @@ public:
 	float Distancia(Ponto p) {
 		return sqrt(pow(p.Get_X() - Get_X(), 2) + pow(p.Get_Y() - Get_Y(), 2));
 	}
-
-	static Ponto *Ler_Ponto() {
-		int x, y;
-
-		cout << "Introduza as coordenadas do ponto (x, y): ";
-		cin >> x;
-		cin.ignore();
-		cin >> y;
-		cin.ignore();
-
-		return new Ponto(x, y);
-	}
 };
 
 class Uteis {
@@ -129,6 +117,16 @@ public:
 		cout << "Pressione ENTER para continuar...";
 		cin.ignore();
 		cin.get();
+	}
+
+	static Ponto *Ler_Ponto() {
+		int x, y;
+		string input;
+
+		cout << "Introduza as coordenadas do ponto (x, y): ";
+		cin >> input;
+
+		return Split_String_Coordenadas(input);
 	}
 };
 

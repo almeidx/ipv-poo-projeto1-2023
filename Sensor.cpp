@@ -1,11 +1,13 @@
 #include "Sensor.h"
+#include "Fabrica.h"
 
-Sensor::Sensor(int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao) {
+Sensor::Sensor(Fabrica *fabrica, int id, string marca, float valor_aviso, float prob_avaria, Ponto *posicao) {
 	this->id = id;
 	this->marca = marca;
 	this->valor_aviso = valor_aviso;
 	this->prob_avaria = prob_avaria;
 	this->posicao = posicao;
+	this->ptr_fabrica = fabrica;
 
 	valor = Uteis::Generate_Random_Float(1.0, 100.0);
 }
@@ -41,4 +43,28 @@ void Sensor::Print() {
 	cout << "Posicao:                 " << Get_Posicao()->To_String() << endl;
 	cout << "Em alerta:               " << (Em_Alerta() ? "Sim" : "Nao") << endl;
 	cout << string(27, '-') << endl;
+}
+
+void SLuz::Avisar_Fabrica() {
+	Get_Fabrica()->Aviso_Luz(ALERTA_LUZ_FICHEIRO_VIDEO);
+}
+
+list<Motor *> SHumidade::Avisar_Fabrica() {
+	list<Motor *> motores_desligados;
+
+	Get_Fabrica()->Aviso_Humidade(motores_desligados);
+
+	return motores_desligados;
+}
+
+list<Motor *> SFumo::Avisar_Fabrica() {
+	list<Motor *> motores_desligados;
+
+	Get_Fabrica()->Aviso_Fumo(motores_desligados, ALERTA_FUMO_FICHEIRO_VIDEO);
+
+	return motores_desligados;
+}
+
+void SMissel::Avisar_Fabrica() {
+	Get_Fabrica()->Aviso_Missel(ALERTA_MISSEL_FICHEIRO_VIDEO, ALERTA_MISSEL_FICHEIRO_ESTADO);
 }

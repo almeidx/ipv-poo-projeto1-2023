@@ -7,12 +7,7 @@
 
 using namespace std;
 
-enum ESTADO_MOTOR {
-	STOP = 0,
-	START,
-	RUN,
-	AVARIADO,
-};
+enum ESTADO_MOTOR { STOP = 0, START, RUN, AVARIADO };
 
 class LimitesMotor {
 	Pair verde, amarelo, vermelho;
@@ -52,7 +47,6 @@ public:
 class Fabrica;
 
 class Motor {
-	Fabrica *Ptr_Fabrica;
 	int id;
 	string marca;
 	float consumo_hora, consumo_atual, temperatura_aviso, temperatura_paragem, prob_avaria, temperatura;
@@ -60,6 +54,7 @@ class Motor {
 	Ponto *posicao;
 	int avarias, horas_trabalho;
 	time_t ultima_hora_registada;
+	Fabrica *ptr_fabrica;
 
 	bool Esta_Avariado(const string fname);
 
