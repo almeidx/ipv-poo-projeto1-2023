@@ -53,6 +53,7 @@ public:
 	bool Add(Sensor *s);
 	void Listar(ostream &f = cout);
 	void Desligar(int id_motor);
+	/** Retorna o estado do motor com o id introduzido. Caso não seja encontrado, irá retornar ESTADO_MOTOR::AVARIADO */
 	ESTADO_MOTOR Get_Estado(int id_motor);
 	list<Motor *> Listar_Tipo(string Tipo, ostream &f = cout);
 	bool Manutencao();

@@ -19,11 +19,14 @@ Sensor::~Sensor() {
 }
 
 float Sensor::Ler_Valor() {
+	// Gerar um valor aleatório entre 0 e 1 para decidir se vamos aumentar ou diminuir o valor atual do sensor
 	int adc_ou_sub = Uteis::Generate_Random_Int(0, 1);
 
+	// Gerar valor aleatório para modificar o valor atual do sensor
 	float val = Uteis::Generate_Random_Int(1.0, 2.5);
 
-	if (!adc_ou_sub || valor - val <= 0) {
+	// Verificamos se o valor atual é menor do que o valor gerado automaticamente de modo a não ficar negativo / 0
+	if (adc_ou_sub == 0 || valor <= val) {
 		valor += val;
 	} else {
 		valor -= val;
@@ -41,7 +44,6 @@ void Sensor::Print() {
 	cout << "Valor de aviso:          " << Get_Valor_Aviso() << endl;
 	cout << "Probabilidade de avaria: " << Get_Prob_Avaria() << endl;
 	cout << "Posicao:                 " << Get_Posicao()->To_String() << endl;
-	cout << "Em alerta:               " << (Em_Alerta() ? "Sim" : "Nao") << endl;
 	cout << string(27, '-') << endl;
 }
 

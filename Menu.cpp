@@ -4,7 +4,7 @@ Menu::Menu(Fabrica *f) {
 	ptr_fabrica = f;
 }
 
-void Menu::iniciar() {
+int Menu::loop() {
 	int option;
 
 	do {
@@ -49,8 +49,10 @@ void Menu::iniciar() {
 
 	case 5:
 		sair();
-		break;
+		return 1;
 	}
+
+	return 0;
 }
 
 void Menu::fabrica() {
@@ -88,8 +90,8 @@ void Menu::fabrica() {
 	switch (option) {
 	case 1: {
 		if (!ptr_fabrica->Get_User_Atual()) {
-			cout << "Não tem permissões para carregar um ficheiro! Tente adicionar um Administrador através do menu de "
-					"Utilizadores"
+			cout << "Não tem permissões para carregar um ficheiro! "
+					"Tente adicionar um Administrador através do menu de Utilizadores"
 				 << endl;
 
 			Uteis::Pausar();
@@ -136,7 +138,13 @@ void Menu::fabrica() {
 	}
 
 	case 5: {
-		ptr_fabrica->Ranking_Dos_Fracos();
+		list<string> ranking = ptr_fabrica->Ranking_Dos_Fracos();
+
+		int i = 1;
+		for (list<string>::iterator it = ranking.begin(); it != ranking.end(); it++) {
+			cout << i << "º " << *it << endl;
+			i++;
+		}
 
 		Uteis::Pausar();
 
@@ -144,7 +152,13 @@ void Menu::fabrica() {
 	}
 
 	case 6: {
-		ptr_fabrica->Ranking_Dos_Mais_Trabalhadores();
+		list<Motor *> trabalhadores = ptr_fabrica->Ranking_Dos_Mais_Trabalhadores();
+
+		int i = 1;
+		for (list<Motor *>::iterator it = trabalhadores.begin(); it != trabalhadores.end(); it++) {
+			cout << i << "º " << (*it)->Get_Id() << " - " << (*it)->Get_Horas_Trabalho() << "h" << endl;
+			i++;
+		}
 
 		Uteis::Pausar();
 
@@ -155,12 +169,24 @@ void Menu::fabrica() {
 		string filename = ler_nome_fich();
 		ptr_fabrica->Relatorio(filename);
 
+		cout << "Relatório da fábrica guardado no ficheiro " << filename << " com sucesso!" << endl;
+
 		Uteis::Pausar();
 
 		break;
 	}
 
 	case 8: {
+		if (!ptr_fabrica->Get_User_Atual() || !ptr_fabrica->Get_User_Atual()->Posso_Run()) {
+			cout << "Não tem permissões para colocar a fábrica a trabalhar! "
+					"Tente adicionar um Administrador através do menu de Utilizadores"
+				 << endl;
+
+			Uteis::Pausar();
+
+			break;
+		}
+
 		list<Motor *> *motores = ptr_fabrica->Get_Motores();
 		list<Sensor *> *sensores = ptr_fabrica->Get_Sensores();
 
@@ -180,11 +206,11 @@ void Menu::fabrica() {
 				time_t tempo = ptr_fabrica->Get_Time();
 				cout << "Motores e sensores estão a trabalhar no tempo simulado: " << asctime(localtime(&tempo));
 
-				for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+				for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); ++it) {
 					(*it)->RUN();
 				}
 
-				for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); it++) {
+				for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); ++it) {
 					(*it)->Ler_Valor();
 				}
 
@@ -193,7 +219,7 @@ void Menu::fabrica() {
 
 			cout << "Trabalho terminado!" << endl;
 
-			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); ++it) {
 				(*it)->STOP(false);
 			}
 		}
@@ -300,7 +326,7 @@ void Menu::utilizadores() {
 				cout << "Erro ao criar utilizador!" << endl;
 			}
 		} else {
-			cout << "Motor não criado." << endl;
+			cout << "Utilizador não criado." << endl;
 		}
 
 		Uteis::Pausar();
@@ -328,7 +354,7 @@ void Menu::utilizadores() {
 		if (users->empty()) {
 			cout << "Não há utilizadores!" << endl;
 		} else {
-			for (list<User *>::iterator it = users->begin(); it != users->end(); it++) {
+			for (list<User *>::iterator it = users->begin(); it != users->end(); ++it) {
 				(*it)->Print();
 			}
 		}
@@ -339,6 +365,12 @@ void Menu::utilizadores() {
 	}
 
 	case 4: {
+		if (!ptr_fabrica->Get_User_Atual() || !ptr_fabrica->Get_User_Atual()->Posso_Remover()) {
+			cout << "Não tem permissões para apagar utilizadores!" << endl;
+			Uteis::Pausar();
+			break;
+		}
+
 		list<User *> *users = ptr_fabrica->Get_Users();
 
 		if (users->empty()) {
@@ -350,8 +382,14 @@ void Menu::utilizadores() {
 			cout << "Introduza o id do utilizador a apagar: ";
 			cin >> id;
 
-			for (list<User *>::iterator it = users->begin(); it != users->end(); it++) {
+			for (list<User *>::iterator it = users->begin(); it != users->end(); ++it) {
 				if ((*it)->Get_Id() == id) {
+					if ((*it)->Get_Id() == ptr_fabrica->Get_User_Atual()->Get_Id()) {
+						cout << "Não pode apagar o utilizador atual!" << endl;
+						Uteis::Pausar();
+						return;
+					}
+
 					users->erase(it);
 					erased = true;
 					break;
@@ -495,7 +533,7 @@ void Menu::motores() {
 		if (motores->empty()) {
 			cout << "Não existem motores!" << endl;
 		} else {
-			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); ++it) {
 				(*it)->Print();
 			}
 		}
@@ -506,6 +544,12 @@ void Menu::motores() {
 	}
 
 	case 3: {
+		if (!ptr_fabrica->Get_User_Atual() || !ptr_fabrica->Get_User_Atual()->Posso_Remover()) {
+			cout << "Não tem permissões para apagar motores!" << endl;
+			Uteis::Pausar();
+			break;
+		}
+
 		list<Motor *> *motores = ptr_fabrica->Get_Motores();
 
 		if (motores->empty()) {
@@ -517,7 +561,7 @@ void Menu::motores() {
 			cout << "Introduza o id do motor a apagar: ";
 			cin >> id;
 
-			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); it++) {
+			for (list<Motor *>::iterator it = motores->begin(); it != motores->end(); ++it) {
 				if ((*it)->Get_Id() == id) {
 					motores->erase(it);
 					erased = true;
@@ -660,7 +704,7 @@ void Menu::sensores() {
 		if (sensores->empty()) {
 			cout << "Não existem sensores!" << endl;
 		} else {
-			for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); it++) {
+			for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); ++it) {
 				(*it)->Print();
 			}
 		}
@@ -671,6 +715,12 @@ void Menu::sensores() {
 	}
 
 	case 3: {
+		if (!ptr_fabrica->Get_User_Atual() || !ptr_fabrica->Get_User_Atual()->Posso_Remover()) {
+			cout << "Não tem permissões para apagar sensores!" << endl;
+			Uteis::Pausar();
+			break;
+		}
+
 		list<Sensor *> *sensores = ptr_fabrica->Get_Sensores();
 
 		if (sensores->empty()) {
@@ -682,7 +732,7 @@ void Menu::sensores() {
 			cout << "Introduza o id do sensor a apagar: ";
 			cin >> id;
 
-			for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); it++) {
+			for (list<Sensor *>::iterator it = sensores->begin(); it != sensores->end(); ++it) {
 				if ((*it)->Get_Id() == id) {
 					sensores->erase(it);
 					erased = true;
@@ -774,8 +824,6 @@ void Menu::sair() {
 	cout << " /_/    \\_\\__\\___|   | |\\__,_(_)" << endl;
 	cout << "                    _/ |            " << endl;
 	cout << "                   |__/             " << endl;
-
-	exit(EXIT_SUCCESS);
 }
 
 string Menu::ler_nome_fich() {

@@ -52,6 +52,10 @@ public:
 		return ptr_fabrica;
 	}
 
+	bool Valor_Alto() {
+		return Get_Valor_Atual() >= Get_Valor_Aviso();
+	}
+
 	virtual bool Em_Alerta() {
 		return false;
 	}
@@ -72,7 +76,7 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+		if (Valor_Alto()) {
 			Avisar_Fabrica();
 			return true;
 		}
@@ -93,7 +97,7 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+		if (Valor_Alto()) {
 			list<Motor *> motores_desligados = Avisar_Fabrica();
 
 			cout << "[" << __FUNCTION__ << "] Número de motores desligados: " << motores_desligados.size() << endl;
@@ -117,7 +121,7 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+		if (Valor_Alto()) {
 			list<Motor *> motores_desligados = Avisar_Fabrica();
 
 			cout << "[" << __FUNCTION__ << "] Número de motores desligados: " << motores_desligados.size() << endl;
@@ -141,7 +145,8 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
+		if (Valor_Alto()) {
+			cout << "alerta missel!!" << endl;
 			Avisar_Fabrica();
 			return true;
 		}
@@ -160,11 +165,7 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
-			return true;
-		}
-
-		return false;
+		return Valor_Alto();
 	}
 
 	string Get_Tipo() {
@@ -178,11 +179,7 @@ public:
 		: Sensor(fabrica, id, marca, valor_aviso, prob_avaria, posicao) {}
 
 	bool Em_Alerta() {
-		if (Get_Valor_Atual() >= Get_Valor_Aviso()) {
-			return true;
-		}
-
-		return false;
+		return Valor_Alto();
 	}
 
 	string Get_Tipo() {

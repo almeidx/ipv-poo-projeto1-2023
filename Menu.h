@@ -21,7 +21,8 @@ class Menu {
 public:
 	Menu(Fabrica *f);
 
-	void iniciar();
+	/** Retorna 1 caso o utilizador desejar sair. Caso contrário, retorna 0 */
+	int loop();
 
 	void fabrica();
 	void utilizadores();

@@ -37,6 +37,11 @@ bool Motor::Esta_Avariado(const string fname) {
 }
 
 bool Motor::RUN() {
+	if (!ptr_fabrica->Get_User_Atual() || !ptr_fabrica->Get_User_Atual()->Posso_Run()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para executar esta ação" << endl;
+		return false;
+	}
+
 	if (Esta_Avariado(__FUNCTION__))
 		return false;
 
@@ -47,9 +52,16 @@ bool Motor::RUN() {
 		return true;
 	}
 
-	temperatura += Uteis::Generate_Random_Float(0.1, 1.0);
-	if (temperatura > temperatura_aviso) {
+	temperatura += Uteis::Generate_Random_Float(0.1, 2.0);
+
+	if (temperatura >= temperatura_paragem) {
+		cout << "[" << __FUNCTION__ << "] Motor " << id << " está demasiado quente!" << endl;
 		ESTOU_QUENTE();
+
+		return false;
+	} else if (temperatura >= temperatura_aviso) {
+		cout << "[" << __FUNCTION__ << "] Motor " << id << " está a ficar quente!" << endl;
+
 		return false;
 	}
 
@@ -60,6 +72,8 @@ bool Motor::RUN() {
 	// Se tiver passado 1 hora desde que começou a funcionar, incrementar o número de horas de funcionamento
 	if (ultima_hora_registada + 60 > horas_agora) {
 		horas_trabalho++;
+
+		// Guardar a hora atual para a próxima verificação
 		ultima_hora_registada = horas_agora;
 	}
 
@@ -76,7 +90,7 @@ void Motor::START() {
 	}
 
 	estado = ESTADO_MOTOR::START;
-	temperatura = 0;
+	temperatura = 0.0f;
 }
 
 void Motor::RESTART() {
@@ -84,13 +98,12 @@ void Motor::RESTART() {
 	START();
 }
 
-bool Motor::STOP(bool warn) {
+bool Motor::STOP(bool warn /* = true */) {
 	if (warn && estado == ESTADO_MOTOR::STOP) {
 		cout << "[" << __FUNCTION__ << "] Motor " << id << " já está parado!" << endl;
 		return false;
 	}
 
-	temperatura_paragem = temperatura;
 	estado = ESTADO_MOTOR::STOP;
 
 	return true;

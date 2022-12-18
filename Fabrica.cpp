@@ -23,16 +23,20 @@ Fabrica::Fabrica(User *ut) : Fabrica() {
 }
 
 Fabrica::~Fabrica() {
-	Users->clear();
-	delete Users;
+	User_Atual = nullptr;
 
-	Sensores->clear();
-	delete Sensores;
+	for (list<User *>::iterator it = Users->begin(); it != Users->end(); ++it)
+		delete *it;
 
-	Motores->clear();
-	delete Motores;
+	for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it)
+		delete *it;
+
+	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it)
+		delete *it;
 
 	delete Relogio;
+
+	cout << "Fábrica \"" << nome << "\" destruída" << endl;
 }
 
 bool Fabrica::Tem_User_Atual(const string fname) {
@@ -204,6 +208,12 @@ bool Fabrica::Add(Motor *m) {
 		return false;
 	}
 
+	if (!User_Atual->Posso_Adicionar()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para adicionar motores" << endl;
+		return false;
+	}
+
+	// Verificar se o motor já existe na lista de motores
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		if ((*it)->Get_Id() == m->Get_Id()) {
 			cout << "[" << __FUNCTION__ << "] Motor com id " << m->Get_Id() << " já existe" << endl;
@@ -217,10 +227,16 @@ bool Fabrica::Add(Motor *m) {
 }
 
 bool Fabrica::Add(Sensor *s) {
-	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Adicionar()) {
+	if (!Tem_User_Atual(__FUNCTION__)) {
 		return false;
 	}
 
+	if (!User_Atual->Posso_Adicionar()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para adicionar sensores" << endl;
+		return false;
+	}
+
+	// Verificar se o sensor já existe na lista de sensores
 	for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it) {
 		if ((*it)->Get_Id() == s->Get_Id()) {
 			cout << "[" << __FUNCTION__ << "] Sensor com id " << s->Get_Id() << " já existe" << endl;
@@ -247,6 +263,15 @@ string Fabrica::Get_Estado_Cor(Motor *m) {
 }
 
 void Fabrica::Listar(ostream &f) {
+	if (!Tem_User_Atual(__FUNCTION__)) {
+		return;
+	}
+
+	if (!User_Atual->Posso_Listar()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para listar" << endl;
+		return;
+	}
+
 	XMLWriter writer(f);
 
 	writer.WriteStartElement("DADOS");
@@ -261,20 +286,20 @@ void Fabrica::Listar(ostream &f) {
 		writer.WriteElementString("DIMENSAO_FABRICA", to_string(dimensao_x) + "," + to_string(dimensao_y));
 
 		for (map<string, LimitesMotor>::iterator it = limites_motores.begin(); it != limites_motores.end(); ++it) {
-			string nome = it->first;
+			string tipo_motor = it->first;
 			LimitesMotor limites = it->second;
 
-			writer.WriteStartElement(nome);
+			writer.WriteStartElement(tipo_motor);
 
 			writer.WriteElementString("VERDE", limites.Get_Verde().To_String());
 			writer.WriteElementString("AMARELO", limites.Get_Amarelo().To_String());
 			writer.WriteElementString("VERMELHO", limites.Get_Vermelho().To_String());
 			writer.WriteElementString("PROB_AVARIA", to_string(limites.Get_Prob_Avaria()));
 
-			writer.WriteEndElement();
+			writer.WriteEndElement(); // tipo_motor
 		}
 
-		writer.WriteEndElement();
+		writer.WriteEndElement(); // DEFINICOES
 	}
 
 	{
@@ -293,10 +318,10 @@ void Fabrica::Listar(ostream &f) {
 			writer.WriteElementString("ESTADO_ATUAL", m->Get_Estado_String());
 			writer.WriteElementString("ESTADO_COR", Get_Estado_Cor(m));
 
-			writer.WriteEndElement();
+			writer.WriteEndElement(); // m->Get_Tipo()
 		}
 
-		writer.WriteEndElement();
+		writer.WriteEndElement(); // MOTORES
 	}
 
 	{
@@ -314,13 +339,13 @@ void Fabrica::Listar(ostream &f) {
 			writer.WriteElementString("PROB_AVARIA", Uteis::Float_To_String_Precisao(s->Get_Prob_Avaria()));
 			writer.WriteElementString("VALOR_ATUAL", Uteis::Float_To_String_Precisao(s->Get_Valor_Atual()));
 
-			writer.WriteEndElement();
+			writer.WriteEndElement(); // s->Get_Tipo()
 		}
 
-		writer.WriteEndElement();
+		writer.WriteEndElement(); // SENSORES
 	}
 
-	writer.WriteEndElement();
+	writer.WriteEndElement(); // DADOS
 }
 
 void Fabrica::Desligar(int id_motor) {
@@ -346,6 +371,15 @@ ESTADO_MOTOR Fabrica::Get_Estado(int id_motor) {
 list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
 	list<Motor *> motores;
 
+	if (!Tem_User_Atual(__FUNCTION__)) {
+		return motores;
+	}
+
+	if (!User_Atual->Posso_Listar()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para listar" << endl;
+		return motores;
+	}
+
 	if (Motores->empty()) {
 		f << "[" << __FUNCTION__ << "] Não existem motores na fábrica" << endl;
 		return motores;
@@ -355,10 +389,10 @@ list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		if ((*it)->Get_Tipo() == Tipo) {
+			f << string(15, '-') << endl;
 			f << "Id:          " << (*it)->Get_Id() << endl;
 			f << "Estado:      " << (*it)->Get_Estado_String() << endl;
 			f << "Temperatura: " << Uteis::Float_To_String_Precisao((*it)->Get_Temperatura()) << endl;
-
 			f << string(15, '-') << endl;
 
 			motores.push_back(*it);
@@ -373,23 +407,44 @@ list<Motor *> Fabrica::Listar_Tipo(string Tipo, ostream &f) {
 }
 
 bool Fabrica::Manutencao() {
-	if (!Tem_User_Atual(__FUNCTION__) || !User_Atual->Posso_Manutencao() || (Motores->empty() && Sensores->empty())) {
+	if (!Tem_User_Atual(__FUNCTION__)) {
 		return false;
 	}
 
+	if (!User_Atual->Posso_Manutencao()) {
+		cout << "[" << __FUNCTION__ << "] Não tem permissões para iniciar uma manutenção" << endl;
+		return false;
+	}
+
+	if (Motores->empty() && Sensores->empty()) {
+		cout << "[" << __FUNCTION__ << "] Não existem motores ou sensores na fábrica" << endl;
+
+		return false;
+	}
+
+	// Colocar a temperatura de cada motor para um valor aleatório dentre do intervalo de temperatura verde
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		string tipo = (*it)->Get_Tipo();
 		LimitesMotor limites = limites_motores[tipo];
-		(*it)->Set_Temperatura(Uteis::Generate_Random_Float(0, limites.Get_Verde().Get_X()));
+		(*it)->Set_Temperatura(Uteis::Generate_Random_Float(limites.Get_Verde().Get_X(), limites.Get_Verde().Get_Y()));
 	}
 
+	// Colocar o valor atual de cada sensor para um valor aleatório menor do que o valor de aviso
 	for (list<Sensor *>::iterator it = Sensores->begin(); it != Sensores->end(); ++it) {
-		(*it)->Set_Valor_Atual(Uteis::Generate_Random_Float(0.0f, (*it)->Get_Valor_Aviso() - 1.0f));
+		float valor_aviso = (*it)->Get_Valor_Aviso();
+		if (valor_aviso <= 1.0f) {
+			// O valor de aviso muito baixo. De modo a não entrar em alerta falsamente, colocar como o valor como 0
+			(*it)->Set_Valor_Atual(0.0f);
+			continue;
+		}
+
+		(*it)->Set_Valor_Atual(Uteis::Generate_Random_Float(0.0f, valor_aviso - 1.0f));
 	}
 
 	return true;
 }
 
+// Pares: marca, número de avarias
 bool Fabrica::Sort_Marcas(pair<string, int> a, pair<string, int> b) {
 	return a.second < b.second;
 }
@@ -397,29 +452,38 @@ bool Fabrica::Sort_Marcas(pair<string, int> a, pair<string, int> b) {
 list<string> Fabrica::Ranking_Dos_Fracos() {
 	list<string> ranking;
 
+	// Caso não existam motores, retornar lista vazia
 	if (Motores->empty()) {
 		return ranking;
 	}
 
+	// Mapa de marca -> número de avarias
 	map<string, int> avarias_marca;
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		string marca = (*it)->Get_Marca();
 		int curr;
 
+		// Obter o número de avarias da marca atual
 		if (avarias_marca.count(marca) == 0) {
 			curr = 0;
 		} else {
 			curr = avarias_marca[marca];
 		}
 
+		// Atualizar o número de avarias da marca atual
 		avarias_marca[marca] = curr + (*it)->Get_Avarias();
 	}
 
-	vector<pair<string, int>> vec{avarias_marca.begin(), avarias_marca.end()};
+	// Converter o mapa para um vector, para poder ordenar
+	// https://stackoverflow.com/a/55674230
+	vector<pair<string, int>> vec{std::make_move_iterator(begin(avarias_marca)),
+								  std::make_move_iterator(end(avarias_marca))};
 
+	// Ordenar o vector pelo número de avarias
 	sort(vec.begin(), vec.end(), Sort_Marcas);
 
+	// Converter o vector para uma lista
 	for (vector<pair<string, int>>::iterator it = vec.begin(); it != vec.end(); ++it) {
 		ranking.push_back(it->first);
 	}
@@ -434,10 +498,12 @@ bool Fabrica::Sort_Motores(Motor *m1, Motor *m2) {
 list<Motor *> Fabrica::Ranking_Dos_Mais_Trabalhadores() {
 	list<Motor *> trabalhadores;
 
+	// Criar uma cópia da lista de motores, para não alterar a lista original
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
 		trabalhadores.push_back((*it));
 	}
 
+	// Ordenar a lista copiada por horas de trabalho de cada motor
 	trabalhadores.sort(Sort_Motores);
 
 	return trabalhadores;
@@ -448,7 +514,6 @@ void Fabrica::Relatorio(string fich_xml) {
 	XMLWriter writer(f);
 
 	writer.WriteStartElement("DADOS");
-
 	writer.WriteStartElement("MOTORES");
 
 	for (list<Motor *>::iterator it = Motores->begin(); it != Motores->end(); ++it) {
@@ -463,11 +528,11 @@ void Fabrica::Relatorio(string fich_xml) {
 		writer.WriteElementString("POSICAO", m->Get_Posicao()->To_String());
 		writer.WriteElementString("ESTADO_ATUAL", m->Get_Estado_String());
 
-		writer.WriteEndElement();
+		writer.WriteEndElement(); // tipo
 	}
 
-	writer.WriteEndElement();
-	writer.WriteEndElement();
+	writer.WriteEndElement(); // MOTORES
+	writer.WriteEndElement(); // DADOS
 }
 
 int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
@@ -475,11 +540,19 @@ int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
 	size_t tam_inicial = lm.size();
 
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
-		if ((*it_sensor)->Get_Tipo() == "SHUMIDADE" && (*it_sensor)->Em_Alerta()) {
+		if ((*it_sensor)->Get_Tipo() == "SHUMIDADE" && (*it_sensor)->Valor_Alto()) {
 			Ponto *posicao_sensor = (*it_sensor)->Get_Posicao();
+
 			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
+				// Ignorar motores que já foram parados e que estão na lista,
+				// pois pode haver mais do que um sensor de humidade em alerta
+				if (lm.size() > 0 && find(lm.begin(), lm.end(), *it_motor) != lm.end()) {
+					continue;
+				}
+
 				Ponto *posicao_motor = (*it_motor)->Get_Posicao();
 
+				// Verificar a distância absoluta entre o sensor e o motor (sem considerar o sinal)
 				if (abs(posicao_sensor->Distancia(*posicao_motor)) <= DISTANCIA_MAXIMA_SENSOR_FUMO) {
 					(*it_motor)->STOP();
 
@@ -489,6 +562,7 @@ int Fabrica::Aviso_Humidade(list<Motor *> &lm) {
 		}
 	}
 
+	// Retornar o número de motores parados por esta função
 	return lm.size() - tam_inicial;
 }
 
@@ -497,23 +571,28 @@ int Fabrica::Aviso_Fumo(list<Motor *> &lm, string fich_video) {
 	size_t tam_inicial = lm.size();
 
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
-		if ((*it_sensor)->Get_Tipo() == "SFUMO" && (*it_sensor)->Em_Alerta()) {
+		if ((*it_sensor)->Get_Tipo() == "SFUMO" && (*it_sensor)->Valor_Alto()) {
+			// Parar todos os motores da fábrica
+
 			for (list<Motor *>::iterator it_motor = Motores->begin(); it_motor != Motores->end(); ++it_motor) {
 				(*it_motor)->STOP();
 
 				lm.push_back(*it_motor);
 			}
+
+			break;
 		}
 	}
 
 	system((PLAYER_VIDEO " " + fich_video).c_str());
 
+	// Retornar o número de motores parados por esta função
 	return lm.size() - tam_inicial;
 }
 
 int Fabrica::Aviso_Luz(string fich_video) {
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
-		if ((*it_sensor)->Get_Tipo() == "SLUZ" && (*it_sensor)->Em_Alerta()) {
+		if ((*it_sensor)->Get_Tipo() == "SLUZ" && (*it_sensor)->Valor_Alto()) {
 			system((PLAYER_VIDEO " " + fich_video).c_str());
 
 			return 1;
@@ -525,7 +604,7 @@ int Fabrica::Aviso_Luz(string fich_video) {
 
 void Fabrica::Aviso_Missel(string fvideo, string festado) {
 	for (list<Sensor *>::iterator it_sensor = Sensores->begin(); it_sensor != Sensores->end(); ++it_sensor) {
-		if ((*it_sensor)->Get_Tipo() == "SMISSEL" && (*it_sensor)->Em_Alerta()) {
+		if ((*it_sensor)->Get_Tipo() == "SMISSEL" && (*it_sensor)->Valor_Alto()) {
 			ofstream f(festado);
 
 			Listar(f);

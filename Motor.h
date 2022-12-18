@@ -128,7 +128,6 @@ public:
 	MCombostao(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
 			   float temperatura_paragem, float prob_avaria, Ponto *posicao)
 		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
-	~MCombostao() {}
 
 	string Get_Tipo() {
 		return "MCOMBUSTAO";
@@ -140,7 +139,6 @@ public:
 	MEletrico(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
 			  float temperatura_paragem, float prob_avaria, Ponto *posicao)
 		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
-	~MEletrico() {}
 
 	string Get_Tipo() {
 		return "MELETRICO";
@@ -152,7 +150,6 @@ public:
 	MInducao(Fabrica *fabrica, int id, string marca, float consumo_hora, float temperatura_aviso,
 			 float temperatura_paragem, float prob_avaria, Ponto *posicao)
 		: Motor(fabrica, id, marca, consumo_hora, temperatura_aviso, temperatura_paragem, prob_avaria, posicao) {}
-	~MInducao() {}
 
 	string Get_Tipo() {
 		return "MINDUCAO";
